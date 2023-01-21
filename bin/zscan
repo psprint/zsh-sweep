@@ -9,7 +9,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
             -o warncreateglobal -o typesetsilent
 
 # $0 support
-0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
 # Load initialization script
 source "$0:h:h"/libexec/zs::global-init.zsh

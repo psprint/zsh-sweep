@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 
 # Set options
-builtin emulate -L zsh -o extendedglob -o noshortloops -o warncreateglobal \
-                        -o typesetsilent -o kshglob
+builtin emulate -L zsh -o extendedglob -o kshglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
 
 # $0 support
-0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
 # -v verbose
 # -G no cd, absolute paths
@@ -20,11 +20,11 @@ local qe
 
 for qe; do
     local qc="\"{205}${qe:-(nullstr)}{135}\""
-    [[ $qe == INVALIDSTR ]]&&tigmsg -h %B{208}Error:{135} invalid byte in: $qc…
-    [[ $qe == EMPTYSTR ]]&&tigmsg -h %B{208}Error:{135} no data in: $qc…
-    [[ $qe != PRINTSTR ]]&&tigmsg -h %B{208}Error:{135} no visible data in: $qc…
-    [[ $qe == CTRLSTR ]]&&tigmsg -h %B{208}Error:{135} control-only data in: $qc…
+    [[ $qe == INVALIDSTR ]]&&zsmsg -h %B{208}Error:{135} invalid byte in: $qc…
+    [[ $qe == EMPTYSTR ]]&&zsmsg -h %B{208}Error:{135} no data in: $qc…
+    [[ $qe != PRINTSTR ]]&&zsmsg -h %B{208}Error:{135} no visible data in: $qc…
+    [[ $qe == CTRLSTR ]]&&zsmsg -h %B{208}Error:{135} control-only data in: $qc…
 done
 
-# REPLY is used to mark that tigmsg has been run
+# REPLY is used to mark that zsmsg has been run
 return REPLY

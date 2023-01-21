@@ -1,27 +1,32 @@
 #!/usr/bin/env zsh
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o kshglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
+
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
-0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
-: ${TIG_SUITE_DIR:=$0:h:h} ${Plugins[TIG_DIR]:=$0:h:h}
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
-
-feat/ti::up-find-dir() {
+util/zs::up-find-dir() {
     local w=$1
-    reply=($PWD/(../)#$w(N))
+    reply=($PWD/(../)#$w(N.,@,/))
     reply=(${(@On)reply})
+    # Fix path's ../,etc.
     REPLY=$reply[1]:a
     [[ -n $REPLY ]]
 }
 
 # Input/options
-local prj q
+local PRJ FILEDIR
 local -a qt=(.git TAGS tags CMakeLists.txt configure)
 
-for q in $qt; do
-    feat/ti::up-find-dir $q&&prj=$REPLY&&break
+# Iterate over special files/dirs
+for FILEDIR ($qt); do
+    util/zs::up-find-dir $FILEDIR&&PRJ=$REPLY&&break
 done
 
 REPLY=$REPLY:h
-if [[ -z $prj ]]; then
+if [[ $PRJ == WRONGSTR ]]; then
     tigmsg -h %B{204}Error:%f%b didn\'t find any main poject dir \
                 uptree, was looking for: %B{39}·${(j.%f%b, %B{39}·.)qt}
     return 1

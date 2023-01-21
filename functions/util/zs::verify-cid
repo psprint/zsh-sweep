@@ -1,22 +1,24 @@
 #!/usr/bin/env zsh
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o kshglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
+
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
-0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
-: ${TIG_SUITE_DIR:=$0:h:h} ${Plugins[TIG_DIR]:=$0:h:h}
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
-[[ $1 == -h ]]&&integer quiet=1&&shift
-local FROM=$1 CID=$2
-
-[[ $FROM != commit ]]&&return 0
+[[ $1 == -q ]]&&integer quiet=1&&shift
+local CID=$1
  
-if [[ $CID == 0# ]];then
-    tigmsg $quiet %B{208}Error:{138}%b No commit was highlighted in \
-        %B{208}TIG{138}%b program, got no commit hash, exiting…
+if [[ $CID == WRONGSTR || $#CID -gt 40 ]];then
+    zsmsg $quiet %B{208}Error:{138}%b Got no commit hash \
+        (in %B{41}\"$CID[1,7]\"%b{138}…), exiting…
     return 1
 fi
 
 if ! command git rev-parse --verify --quiet $CID\^{commit} ZSIO;then
-    tigmsg $quiet %B{208}Error:{138}%b Hash {33}$CID[1,7]{138} isn\'t a \
-        commit, exiting…
+    zsmsg $quiet %B{208}Error:{138}%b Hash \"{33}$CID[1,7]{138}\"… \
+        isn\'t a commit, exiting…
     return 1
 fi
 

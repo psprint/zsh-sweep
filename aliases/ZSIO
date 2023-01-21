@@ -1,1 +1,1 @@
--g:&>"${ZSLOG:=$(mktemp /tmp/xzlog.XXX)}"
+-g:&>>!"${ZSLOG:=$(mktemp /tmp/xzlog.XXX)}"

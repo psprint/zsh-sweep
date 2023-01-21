@@ -1,6 +1,11 @@
 #!/usr/bin/env zsh
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o kshglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
+
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
-0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 : ${TIG_SUITE_DIR:=$0:h:h} ${Plugins[TIG_DIR]:=$0:h:h}
 
 if [[ ! -d $TIG_SUITE_DIR || ! -f $0 || ! -r $0 ]];then
