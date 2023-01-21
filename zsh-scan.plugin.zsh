@@ -13,6 +13,28 @@ if [[ ${zsh_loaded_plugins[-1]} != */zsh-scan && -z ${fpath[(r)${0:h}]} ]] {
 typeset -gA Plugins
 Plugins[ZSDIR]="${0:h}"
 
-autoload -Uz functions/*[^~](N.,@:t) functions/*/*[^~](N.,@:t2)
+export ZSDIR="${0:h}" ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL ZSAES
 
+() {
+# Right customizable ~/.config/… and ~/.cache/… file paths
+: ${ZSNICK:=ZshScan}
+# Config dir and file
+: ${ZSCONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/${(L)ZSNICK}}
+: ${ZSNFO:=$ZSCONFIG/zscan.conf}
+# Cache dir and file
+: ${ZSCACHE:=${XDG_CACHE_HOME:-$HOME/.config}/${(L)ZSNICK}}
+: ${ZSLOG:=$ZSCACHE/${(L)ZSNICK}.log}
+# Aliases dir
+: ${ZSAES:=$ZSDIR/aliases}
+# /dev/null file
+: ${ZSNL:=$ZSLOG}
+
+export ZSNICK ZSNFO=${~ZSNFO} ZSLOG=${~ZSLOG} ZSCONFIG=${~ZSCONFIG} \
+        ZSCACHE=${~ZSCACHE} ZSNL=${~ZSNL} ZSAES=${~ZSAES}
+command mkdir -p $ZSNFO:h $ZSLOG:h $ZSCACHE $ZSCONFIG $ZSNL:h $ZSAES
+}
+
+autoload -z functions/*[^~](N.,@:t) functions/*/*[^~](N.,@:t2)
+
+util/zs::setup-aliases||return 1
 # vim:ft=zsh:tw=80:sw=4:sts=4:et:foldmarker=[[[,]]]
