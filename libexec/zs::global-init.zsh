@@ -80,7 +80,7 @@ export ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL
 : ${ZSCACHE:=${${XDG_CACHE_HOME:+$XDG_CACHE_HOME/${(L)ZSNICK}}:-$HOME/.cache/${(L)ZSNICK}}}
 : ${ZSLOG:=$ZSCACHE/${(L)ZSNICK}.log}
 : ${ZSNL:=$ZSLOG}
-: ${ZSAES:=$ZSG/aliases}
+: ${ZSAES:=$ZSDIR/aliases}
 export ZSNFO=${~ZSNFO} ZSLOG=${~ZSLOG} ZSCACHE=${~ZSCACHE} \
         ZSCONFIG=${~ZSCONFIG} ZSNL=${~ZSNL} ZSAES=${~ZSAES}
 command mkdir -p $ZSNFO:h $ZSLOG:h $ZSCACHE $ZSCONFIG $ZSNL:h $ZSAES:h
@@ -96,8 +96,8 @@ if [[ ! -f $ZSNFO ]]; then
 fi
 
 # Autoload functions
-autoload -z $ZS/functions/(zs:#)*~*'~'(#qN.non:t) \
-                $ZS/functions/*/zs::*~*'~'(#qN.non:t2)
+autoload -z functions/(zs:#)*~*'~'(#qN.non:t) \
+                functions/*/zs::*~*'~'(#qN.non:t2)
 
 # Export a few local var
 util/zs::setup-aliases||return 1
