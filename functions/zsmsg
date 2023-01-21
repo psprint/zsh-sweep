@@ -27,14 +27,14 @@ builtin zparseopts -D -E -A Opts -- h p q e n || return 7
 
 # The color theme → customize via theme file or XZ global, first testing it
 (
-    {local -A XZ=("${(kv@)XZ}")} XZIO
+    {local -A XZ=("${(kv@)XZ}")} ZSIO
     return 3
 )&&\
     (($?==3))&&local -A XZ=("${(kv@)XZ}")||local -A XZ
 
 if [[ -f $XZDIR/themes/$XZTHEME:t:r.xzt(#qN) || -f ${XZTHEME::=$XZDIR/themes/default.xzt} ]]; then
     local -a q=($XZDIR/themes/$XZTHEME(.xzt|)(N) $XZTHEME(N))
-    eval "XZ=(${(@z)"$(<$q[1])"})" XZIO||\
+    eval "XZ=(${(@z)"$(<$q[1])"})" ZSIO||\
         builtin print -u2 xzmsg:$LINENO Couldn\'t read theme file $XZTHEME \
             \(error msg: $(<$XZLOG)\)
 else

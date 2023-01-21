@@ -14,7 +14,7 @@ if [[ $CID == 0# ]];then
     return 1
 fi
 
-if ! command git rev-parse --verify --quiet $CID\^{commit} TIO;then
+if ! command git rev-parse --verify --quiet $CID\^{commit} ZSIO;then
     tigmsg $quiet %B{208}Error:{138}%b Hash {33}$CID[1,7]{138} isn\'t a \
         commit, exiting…
     return 1

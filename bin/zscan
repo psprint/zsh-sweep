@@ -1,0 +1,107 @@
+#!/usr/bin/env zsh
+# Copyright (c) 2023 Sebastian Gniazdowski
+
+# Recognize and save info on run as `#!/usr/bin/env zsh` script
+[[ $0 != zscan || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o noshortloops \
+            -o warncreateglobal -o typesetsilent
+
+# $0 support
+0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+
+# Load initialization script
+source "$0:h:h"/libexec/zs::global-init.zsh
+
+# -v verbose
+# -G no cd, absolute paths
+# -s select visually
+# -# offset of the picked °feature° when multiple match
+# -l show files in the °feature°
+local -A Opts
+builtin zparseopts -D -E -A Opts -- v||return 7
+
+if (($+Opts[-h]||$+Opts[--help]));then
+    local nl=$'\n'
+    tigmsg %B{33}zscan%b -vGghl\# %B{41}\<°feature-ID°\>$nl\
+    return 0
+fi
+
+# Get the query from filtered args
+local QR=$1
+
+util/zs::chkstr $QR||return 1
+
+# Read feature registry
+{reply=(${(f@)"$(<$TINFO)"});} ZSIO
+if ((!$#reply));then
+    tigmsg -h %B{208}Error:{135} no features defined
+    return 1
+fi
+
+# Any query given?
+if ((!$#QR&&!$+Opts[-s]));then
+    tigmsg -h %B{208}Error:{135} argument required – the feature to open
+    return 0
+fi
+
+# Prepare patterns
+local QRP="((#s)|[^/]##)[^:]#${QR}[^:]#" FEATP='[^/]##/[^:]##'
+
+# TUI-pick the °feature°?
+if (($+Opts[-s]));then
+    integer ret
+    (($+functions[feat/zs::open-feature]))&&feat/zs::open-feature;ret+=!$?
+    (($+functions[zs::open-feature]))&&zs::open-feature;ret+=!$?
+    (($+commands[zs::open-feature]))&&command zs::open-feature;ret+=!$?
+    return !ret
+fi
+
+# Search for requested °feature°
+reply=(${(M)reply:#(#b)$~QRP: Q:\"([^\"]##)\" *})
+if ((!$#reply));then
+    tigmsg -h %B{208}Error:{135} No such feature: {205}\"{41}*{39}$QR{41}*{205}\"
+    return 1
+fi
+
+local PDIR=$match[2]
+
+if (($+Opts[-g]));then
+    local OUTPUT
+    tigmsg -h {33}Grep result %B{41}'|·|'=$#reply%b{33} \
+            for query: %B{41}/{135}$QR{41}/{33}:
+    printf -v OUTPUT {205}·{41}%s\\n ${(M)reply##$~FEATP}
+    tigmsg $OUTPUT
+    return
+fi
+
+# Support -# indice options
+if (($#reply>1&&!Opts[(i)-<->]));then
+    tigmsg -h %B{208}Error:{135} multiple matches \
+        {41}({69}${(j:{41}, {69}:)${(M)reply##$~FEATP}}{41}){135}, \
+        please narrow the query
+    return 1
+elif (($#reply>1)); then
+    integer qi=-1*Opts[(i)-<->]
+    if ((qi<=$#reply&&qi));then
+        reply=($reply[qi])
+    else
+        tigmsg -h %B{208}Error:{135} given index ({41}${Opts[(i)-<->]#-}{135}) \
+            greater than {39}$#reply
+        return 1
+    fi
+fi
+
+local FEATID=${(M)reply[1]##$~FEATP} 
+local -a files=(${(Q)${(z)reply[1]##$~FEATP: Q:\"[^\"]##\" }})
+
+# List files in a feature?
+if (($+Opts[-l]));then
+    tigmsg {135}Files in %B{33}$FEATID%b{135}:
+    printf ·%s\\n $files
+    return !$#files
+fi
+
+util/zs::get-editor||return 1
+local qe=$REPLY

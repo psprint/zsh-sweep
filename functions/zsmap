@@ -20,14 +20,14 @@ builtin zparseopts -D -E -A Opts -- o||return 1
 local f=$1
 shift
 
-builtin type xz XZIO||alias xz="\\xzmsg \$0:\$LINENO"
+builtin type xz ZSIO||alias xz="\\xzmsg \$0:\$LINENO"
  
 if [[ -z $f ]];then
     xz -h {208}Error:{137} Missing first arg: runnable name/path
     return 1
 fi
 
-if ! type $f XZIO; then
+if ! type $f ZSIO; then
     xz -h {208}Error:{137} Couldn\'t find runnable: {33}$f
     return 3
 fi

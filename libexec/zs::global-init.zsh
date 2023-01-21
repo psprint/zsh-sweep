@@ -19,7 +19,7 @@ builtin setopt extendedglob kshglob warncreateglobal typesetsilent noshortloops 
 local -x ZSNICK=TigSuite
 typeset -gA Plugins
 
-# FUNCTION: tigmsg [[[
+# FUNCZSION: tigmsg [[[
 # An wrapping function that looks for backend outputting function
 # and uses a verbatim `print` builtin otherwise.
 \tigmsg_()
