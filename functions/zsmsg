@@ -1,0 +1,107 @@
+#!/usr/bin/env zsh
+# -*- mode: sh;sh-indentation: 4;indent-tabs-mode: nil;sh-basic-offset: 4; -*-
+#
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+# Recognize and save info on run as `#!/usr/bin/env zsh` script
+[[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set $0 with a new trik - use of %x prompt expansion
+0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+
+# Source init script
+source "$0:h:h/share/preamble.inc.zsh"
+
+# -h - origin tag
+# -p - overwrite quiet mode
+# -q - quiet mode
+# -e - print to stderr
+# -n - no new line
+local -A Opts
+builtin zparseopts -D -E -A Opts -- h p q e n || return 7
+
+# Quiet mode? → no printing if so
+[[ ($+Opts[-q] == 1 || $1 == 1) && $+Opts[-p] != 1 ]]&&return
+[[ $1 == 0 ]]&&shift
+
+# The color theme → customize via theme file or XZ global, first testing it
+(
+    {local -A XZ=("${(kv@)XZ}")} XZIO
+    return 3
+)&&\
+    (($?==3))&&local -A XZ=("${(kv@)XZ}")||local -A XZ
+
+if [[ -f $XZDIR/themes/$XZTHEME:t:r.xzt(#qN) || -f ${XZTHEME::=$XZDIR/themes/default.xzt} ]]; then
+    local -a q=($XZDIR/themes/$XZTHEME(.xzt|)(N) $XZTHEME(N))
+    eval "XZ=(${(@z)"$(<$q[1])"})" XZIO||\
+        builtin print -u2 xzmsg:$LINENO Couldn\'t read theme file $XZTHEME \
+            \(error msg: $(<$XZLOG)\)
+else
+     builtin print -u2 xzmsg:$LINENO Couldn\'t read default theme \($XZTHEME\)
+fi
+
+# Blue message origin tag?
+local funloc=$1 nick=$APPNICK tmp
+[[ $funloc == ?*:<-> ]]&&shift||funloc=
+[[ -n $funloc ]]&&tmp+="{tag}%B[%b$funloc%B]%b:{%}"
+[[ -n $nick ]]&&tmp+="{nick}%U%B[%b$nick%B]{%}"
+
+# Output origin tag?
+(($+Opts[-h]))&&builtin set -- $tmp "$@"
+# Output to stderr?
+(($+Opts[-e]))&&local err=-u2
+# No new line?
+(($+Opts[-n]))&&local n=-n
+
+xzmsg_cmd_helper() {
+    [[ $(builtin type -w xz-format-$1) != *:\ none ]]&&print found
+}
+
+# Main work function
+xzmsg_subst() {
+    local pstart=$1 pend=$2 esc=$'\e[' cpstart='{' cpend='}'
+    local op='«' cop='{' qc=%${${${(M)pstart#$cpstart}:+F}:-K} tmp tmpb tmpa
+    shift 2
+    # Format functions
+    #${$(print -ru2 match 1:$match[1] 2:$match[2] 3:$match[2] 4:$match[3])+}\
+    REPLY="${(j: :)@//(#b)([\\]#)${pstart}([^$pend]##)$pend\
+([^$pstart]#~*[\\]##)/\
+${${tmp::=$pstart$match[2]$pend}+}\
+${${tmpb::=1}+}\
+${${tmpa::=${match[1]//(#m)(#s)([\\][\\])#(#e)/\
+${$(xzmsg_cmd_helper $match[2]):+\
+$(xz-format-"$match[2]" "$match[3]")\
+${match[3]::=}${tmpb::=}${${match[1]::=${match[1]%[\\]}}+}}}}+}\
+$match[1]${tmpa/(#m)(#s)[\\]##(#e)/$tmp${tmpb::=}}\
+${tmpb:+$tmp}$match[3]}"
+    # XZ fields
+    local e=kufbKUFB
+    REPLY="${REPLY//(#b)([\\]#)${pstart}([^$pend]##)$pend\
+([^$pstart]#~*[\\]##)/\
+${match[1]%[\\]}\
+${${tmpb::=$pstart$match[2]$pend}+}\
+${${tmp::=${${${${(M)XZ[$match[2]]:#\
+(#m)($esc|(%[$e])##|)(<->##(m|)|$'\n'|…|)}:+\
+${MATCH%%[0-9]##}\
+${${(M)MATCH%<->}:+$qc${cpstart}${MATCH##[^0-9]##}${cpend}}}}}}+}\
+${${match[1]//(#s)([\\][\\])#(#e)/$tmp}//(#s)(#m)[\\]##(#e)/$tmpb}$match[3]}"
+    return 0
+}
+
+# Substitute foreground {color}
+xzmsg_subst '{' '}' "$@"
+# Substitute background «color»
+xzmsg_subst '«' '»' "$REPLY"
+
+# Substitute $HOME
+REPLY="${REPLY//$HOME/~}"
+
+# Output
+#printf %s\\n
+builtin print -r $n $err -P -- "$REPLY" "%k%f%b%u"
+
+# Mark that xzmsg has run, to use in [[…]]&&xzmsg … cascades
+REPLY=1
+
+# vim:ft=zsh:sw=4:sts=4:et

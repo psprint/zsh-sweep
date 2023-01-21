@@ -1,0 +1,1 @@
+-g:([[:space:][:INCOMPLETE:][:INVALID:]$'\e']#|*[[:INCOMPLETE:][:INVALID:]]*)

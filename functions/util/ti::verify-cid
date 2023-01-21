@@ -1,0 +1,23 @@
+#!/usr/bin/env zsh
+# Possibly fix $0 with a new trick – use of a %x prompt expansion
+0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+: ${TIG_SUITE_DIR:=$0:h:h} ${Plugins[TIG_DIR]:=$0:h:h}
+
+[[ $1 == -h ]]&&integer quiet=1&&shift
+local FROM=$1 CID=$2
+
+[[ $FROM != commit ]]&&return 0
+ 
+if [[ $CID == 0# ]];then
+    tigmsg $quiet %B{208}Error:{138}%b No commit was highlighted in \
+        %B{208}TIG{138}%b program, got no commit hash, exiting…
+    return 1
+fi
+
+if ! command git rev-parse --verify --quiet $CID\^{commit} TIO;then
+    tigmsg $quiet %B{208}Error:{138}%b Hash {33}$CID[1,7]{138} isn\'t a \
+        commit, exiting…
+    return 1
+fi
+
+return 0

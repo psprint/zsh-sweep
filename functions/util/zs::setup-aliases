@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+#
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+# Possibly fix $0 with a new trick – use of a %x prompt expansion
+0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+
+# Set up aliases (global, suffix and the proper ones)
+[[ -f $ZSAES/*[^~](#qNY1.) ]]&&for REPLY in $ZSAES/*[^~];do
+    REPLY="$REPLY:t=$(<$REPLY)"
+    alias "${${REPLY#*=}%%:*}" "${(M)REPLY##[^=]##}=${REPLY#*:}"
+done
+
+# vim:ft=zsh:tw=80:sw=4:sts=4:et:foldmarker=[[[,]]]

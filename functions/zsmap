@@ -1,0 +1,65 @@
+#!/usr/bin/env zsh
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+# xzmap – extras function – map function/command to array
+#
+
+# Run as script?
+[[ $0 != xzmap || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set $0 with a new trik - use of %x prompt expansion
+0="${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}"
+
+# Source init script
+source "$0:h:h/share/preamble.inc.zsh"
+
+# Input/options
+local -A Opts
+builtin zparseopts -D -E -A Opts -- o||return 1
+
+local f=$1
+shift
+
+builtin type xz XZIO||alias xz="\\xzmsg \$0:\$LINENO"
+ 
+if [[ -z $f ]];then
+    xz -h {208}Error:{137} Missing first arg: runnable name/path
+    return 1
+fi
+
+if ! type $f XZIO; then
+    xz -h {208}Error:{137} Couldn\'t find runnable: {33}$f
+    return 3
+fi
+
+(($# <= 0))&&{
+    xz -h {208}Error:{137} Missing arguments: the objects to run ·{33}$f\
+        {137}· on
+    return 1
+}
+
+REPLY= reply=()
+local qe ec O
+
+for qe; do
+    repeat 1 {
+        # Capture output?
+        if (($+Opts[-o]));then
+            O=$($f $qe)&&{ec+=0;reply+=("$O")}||{ec+=$(($?%10));reply+=("");}
+        # …or use REPLY?
+        else
+            $f $qe&&{ec+=0;reply+=("$REPLY")}||{ec+=$(($?%10));reply+=("");}
+        fi
+    }
+done
+REPLY=$ec
+
+# At least 1 zero code exists?
+[[ $REPLY != <1-9># ]]&&integer have_output=1
+
+# If run as script, then output via stdout
+if ((have_output&&bescript));then
+    print -r -- $REPLY
+    printf %s\\n "${reply[@]}"
+fi
+return 1-have_output
