@@ -13,9 +13,11 @@ if [[ ${zsh_loaded_plugins[-1]} != */zsh-scan && -z ${fpath[(r)${0:h}]} ]] {
 typeset -gA Plugins
 Plugins[ZSDIR]="${0:h}"
 
-export ZSDIR="${0:h}" ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL ZSAES
+export ZSDIR="${0:h}" ZSNICK ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL \
+        ZSAES ZSTHEME
 
 () {
+builtin emulate -L zsh -o extendedglob
 # Right customizable ~/.config/… and ~/.cache/… file paths
 : ${ZSNICK:=ZshScan}
 # Config dir and file
