@@ -7,7 +7,7 @@
 
 # Set the base and typically useful options
 builtin emulate -L zsh
-builtin setopt extendedglob kshglob warncreateglobal typesetsilent \
+builtin setopt extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd promptsubst
 
 local -x ZSNICK=ZshScan
@@ -97,7 +97,7 @@ fi
 
 # Autoload functions
 autoload -z functions/(zs:#)*~*'~'(#qN.non:t) \
-                functions/*/zs::*~*'~'(#qN.non:t2)
+                functions/*/zs:*~*'~'(#qN.non:t2)
 
 # Export a few local var
 util/zs::setup-aliases||return 1

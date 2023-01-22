@@ -20,7 +20,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 # -# offset of the picked °feature° when multiple match
 # -l show files in the °feature°
 local -A Opts
-builtin zparseopts -D -E -A Opts -- v -C||return 7
+builtin zparseopts -D -E -A Opts -- v -C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'
@@ -28,6 +28,21 @@ if (($+Opts[-h]||$+Opts[--help]));then
     return 0
 fi
 
+# Automatic -C value
+: ${Opts[-C]:=$PWD}
+
+local WDIR=$Opts[-C]
+
+if [[ ! -d $WDIR ]];then
+    zsmsg -h {err}Error: The path {path}$WDIR{err} \
+        isn\'t a directory
+fi
+
 # Establish text editor
 util/zs::get-editor||return 1
-local qed=$REPLY
+
+local IN=$1 QED=$REPLY
+local -a content=("${(@f)"$(<$IN)"}")
+
+checks/zs:1:options-are-set content Q
+ 

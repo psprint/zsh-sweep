@@ -5,7 +5,7 @@
 #
 
 # Set options
-builtin emulate -L zsh -o extendedglob -o kshglob -o noshortloops \
+builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
 
 # Possibly fix $0 with a new trick – use of a %x prompt expansion

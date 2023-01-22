@@ -36,6 +36,8 @@ export ZSNICK ZSNFO=${~ZSNFO} ZSLOG=${~ZSLOG} ZSCONFIG=${~ZSCONFIG} \
 command mkdir -p $ZSNFO:h $ZSLOG:h $ZSCACHE $ZSCONFIG $ZSNL:h $ZSAES
 }
 
+(($+zs_set_path))&&typeset -gU path=($ZSDIR/bin $path)
+
 autoload -z functions/*[^~](N.,@:t) functions/*/*[^~](N.,@:t2)
 
 util/zs::setup-aliases||return 1
