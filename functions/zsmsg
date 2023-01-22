@@ -4,8 +4,14 @@
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
 
+#
+# This function is special, because it doesn't source global-init
+# script because there are calls to this function, leading to
+# infinite recursion. It sets up it's autoload functions by itself.
+#
+
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
-[[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
+[[ $0 != zsmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
@@ -13,9 +19,6 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
-
-# Source init script
-source "$0:h:h"/libexec/zs::global-init.zsh
 
 # -h - origin tag
 # -p - overwrite quiet mode
@@ -29,13 +32,16 @@ builtin zparseopts -D -E -A Opts -- h p q e n || return 7
 [[ ($+Opts[-q] == 1 || $1 == 1) && $+Opts[-p] != 1 ]]&&return
 [[ $1 == 0 ]]&&shift
 
+local -U fpath=($0:h:h/functions $fpath)
+autoload -z functions/*[^~](N.,@:t) functions/*/*[^~](N.,@:t2)
+
 util/zs::read-msg-theme
 local -A ZS=("$reply[@]")
 
 # Blue message origin tag?
 local funloc=$1 nick=$ZSNICK tmp
 [[ $funloc == ?*:<-> ]]&&shift||funloc=
-[[ -n $funloc ]]&&tmp+="{tag}%B[%b$funloc%B]%b:{%}"
+[[ -n $funloc ]]&&tmp+="{tag}%B[%b${funloc:t}%B]%b:{%}"
 [[ -n $nick ]]&&tmp+="{nick}%U%B[%b$nick%B]{%}"
 
 # Output origin tag?
@@ -45,12 +51,12 @@ local funloc=$1 nick=$ZSNICK tmp
 # No new line?
 (($+Opts[-n]))&&local n=-n
 
-xzmsg_cmd_helper() {
-    [[ $(builtin type -w xz-format-$1) != *:\ none ]]&&print found
+zsmsg_cmd_helper() {
+    [[ $(builtin type -w zs-format-$1) != *:\ none ]]&&print found
 }
 
 # Main work function
-xzmsg_subst() {
+zsmsg_subst() {
     local pstart=$1 pend=$2 esc=$'\e[' cpstart='{' cpend='}'
     local op='«' cop='{' qc=%${${${(M)pstart#$cpstart}:+F}:-K} tmp tmpb tmpa
     shift 2
@@ -61,8 +67,8 @@ xzmsg_subst() {
 ${${tmp::=$pstart$match[2]$pend}+}\
 ${${tmpb::=1}+}\
 ${${tmpa::=${match[1]//(#m)(#s)([\\][\\])#(#e)/\
-${$(xzmsg_cmd_helper $match[2]):+\
-$(xz-format-"$match[2]" "$match[3]")\
+${$(zsmsg_cmd_helper $match[2]):+\
+$(zs-format-"$match[2]" "$match[3]")\
 ${match[3]::=}${tmpb::=}${${match[1]::=${match[1]%[\\]}}+}}}}+}\
 $match[1]${tmpa/(#m)(#s)[\\]##(#e)/$tmp${tmpb::=}}\
 ${tmpb:+$tmp}$match[3]}"
@@ -81,9 +87,9 @@ ${${match[1]//(#s)([\\][\\])#(#e)/$tmp}//(#s)(#m)[\\]##(#e)/$tmpb}$match[3]}"
 }
 
 # Substitute foreground {color}
-xzmsg_subst '{' '}' "$@"
+zsmsg_subst '{' '}' "$@"
 # Substitute background «color»
-xzmsg_subst '«' '»' "$REPLY"
+zsmsg_subst '«' '»' "$REPLY"
 
 # Substitute $HOME
 REPLY="${REPLY//$HOME/~}"
@@ -92,7 +98,7 @@ REPLY="${REPLY//$HOME/~}"
 #printf %s\\n
 builtin print -r $n $err -P -- "$REPLY" "%k%f%b%u"
 
-# Mark that xzmsg has run, to use in [[…]]&&xzmsg … cascades
+# Mark that zsmsg has run, to use in [[…]]&&zsmsg … cascades
 REPLY=1
 
 # vim:ft=zsh:sw=4:sts=4:et

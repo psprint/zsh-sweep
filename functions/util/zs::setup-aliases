@@ -11,6 +11,11 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
+if [[ ! -d $ZSAES ]];then
+    zsmsg {err}Error:{txt} alias dir not set
+    return 1
+fi
+
 # Set up aliases (global, suffix and the proper ones)
 [[ -f $ZSAES/*[^~](#qNY1.) ]]&&for REPLY in $ZSAES/*[^~];do
     REPLY="$REPLY:t=$(<$REPLY)"

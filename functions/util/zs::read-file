@@ -1,0 +1,45 @@
+#!/usr/bin/env zsh
+# -*- mode: sh;sh-indentation: 4;indent-tabs-mode: nil;sh-basic-offset: 4; -*-
+#
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+# Recognize and save info on run as `#!/usr/bin/env zsh` script
+[[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
+
+# Set $0 with a new trik - use of %x prompt expansion
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+local IN=$1 WAY=${2:-normal}
+local -a content
+
+# Verify input arguments
+if [[ $IN == WRONGSTR ]]; then
+    zsmsg -h {err}Error:{txt} no input file given
+    return 1
+elif [[ $WAY == WRONGSTR ]]; then
+    zsmsg -h {err}Error:{txt} no input method given
+    return 1
+fi
+
+# Load file with normal method
+if [[ $WAY == normal ]];then
+    local IFS=$'\n' LINE NL=$'\n'
+    integer IDX=1 INC
+    while read -r LINE; do
+        ((INC))&&IDX+=1
+        [[ $LINE == *[\\] ]]&&INC=0||INC=1
+        content[IDX]+=${LINE%%[\\$NL]##}
+    done<$IN
+# Or via history mechanism
+else
+    (){fc -a -p $IN; content=(${(Oa)history[@]});}
+fi
+
+printf »%s\\n $content
+
+# vim:ft=zsh:sw=4:sts=4:et

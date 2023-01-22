@@ -10,16 +10,25 @@ builtin emulate -L zsh
 builtin setopt extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd promptsubst
 
-local -x ZSNICK=ZshScan
-typeset -gA Plugins
 
+export ZSNICK=${ZSNICK:-ZshScan}
+typeset -g -a reply match mbegin mend
+typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
+
+# Plugins hash
+typeset -gA Plugins
+print before $Plugins[ZS_GL_SRCD]
+# Already sourced?
+((Plugins[ZS_GL_SRCD]))&&return 0
+# Mark that init script has been sourced
+Plugins[ZS_GL_SRCD]=1
 # FUNCZSION: zsmsg [[[
 # An wrapping function that looks for backend outputting function
 # and uses a verbatim `print` builtin otherwise.
 \zsmsg_()
 {
     if (($+functions[zsmsg])); then
-        zsmsg "$@"
+        \zsmsg "$@"
     elif [[ -x $ZSDIR/functions/zsmsg ]]; then
         $ZSDIR/functions/zsmsg "$@"
     elif (($+commands[zsmsg])); then
@@ -56,9 +65,6 @@ fi
 
 # Shorthand vars
 local ZS=$0:h:h
-
-local -a reply match mbegin mend
-local REPLY MATCH TMP qe; integer MBEGIN MEND
 local -aU path=($path) fpath=($fpath)
 local -U PATH FPATH
 

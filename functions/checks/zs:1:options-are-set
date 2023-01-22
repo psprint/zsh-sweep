@@ -24,4 +24,4 @@ local -a content=("${(P@)CONTENT_VARNAME}") lines
 lines=(${(M)content[@]:#*(emulate$~sp*$~sp-o|setopt)*})
 
 printf ·%s\\n Setopt/emulate\ lines: $lines
-# vim:ft=zsh:sw=4:sts=4:et
+# vim:ft=zsh:sw=4:sts=4:et # vim:ft=zsh:sw=4:sts=4:et# vim:ft=zsh:sw=4:sts=4:et

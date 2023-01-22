@@ -42,6 +42,14 @@ fi
 util/zs::get-editor||return 1
 
 local IN=$1 QED=$REPLY Q
+if [[ ! -r $WDIR/$IN ]];then
+    zsmsg -h {err}Error:{txt} input file \
+        {quot}\"{file}$IN{quot}\"{txt} doesn\'t exist
+    return 1
+fi
+
+util/zs::read-file $IN normal
+
 local -a content=("${(@f)"$(<$IN)"}")
 
 local -a funs=(${(on)functions[(I)checks/zs:<->:*]})
