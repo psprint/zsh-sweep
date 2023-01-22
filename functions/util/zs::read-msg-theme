@@ -17,6 +17,7 @@
 )&&\
     (($?==3))&&local -A ZS=("${(kv@)ZS}")||local -A ZS
 
+local ZSTHEME=$ZSTHEME
 if [[ -f $ZSDIR/themes/$ZSTHEME:t:r.xzt(#qN) || -f ${ZSTHEME::=$ZSDIR/themes/default.xzt} ]]; then
     local -a q=($ZSDIR/themes/$ZSTHEME(.xzt|)(N) $ZSTHEME(N))
     eval "ZS=(${(@z)"$(<$q[1])"})" ZSIO||\

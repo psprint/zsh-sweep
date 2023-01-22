@@ -46,5 +46,6 @@ local -a content=("${(@f)"$(<$IN)"}")
 
 local -a funs=(${(on)functions[(I)checks/zs:<->:*]})
 for Q ($funs);do
+    zsmsg {warn}Warning: running check: {func}${Q/[^\/]#\/zs:<->:}
     "$Q" content Q
 done
