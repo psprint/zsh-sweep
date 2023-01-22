@@ -41,8 +41,10 @@ fi
 # Establish text editor
 util/zs::get-editor||return 1
 
-local IN=$1 QED=$REPLY
+local IN=$1 QED=$REPLY Q
 local -a content=("${(@f)"$(<$IN)"}")
 
-checks/zs:1:options-are-set content Q
- 
+local -a funs=(${(on)functions[(I)checks/zs:<->:*]})
+for Q ($funs);do
+    "$Q" content Q
+done
