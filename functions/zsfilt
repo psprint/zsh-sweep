@@ -28,7 +28,6 @@ builtin zparseopts -D -E -A Opts -- -fr z o||return 1
 
 # Force output mode when script
 ((bescript))&&Opts[-o]=
-printf 2
 
 # Get runnable or pattern to match
 local PAT_OR_RUN=$1
@@ -39,7 +38,6 @@ if [[ -z $PAT_OR_RUN ]];then
     zsmsg -e -h {err}Warning:{txt} No condition object, passing through
     return 1
 fi
-printf 3
 
 # Does runnable exist?
 if (($+Opts[--fr]))&&! type $PAT_OR_RUN ZSIO; then
@@ -84,14 +82,11 @@ for QE; do
         fi
 done
 REPLY=$EC
-printf 5
 
 # At least 1 zero code exists?
 [[ $REPLY != <1-9># ]]&&integer have_output=1
 
-# If run as script, then output via stdout
-if ((have_output&&bescript));then
-    print -r -- $REPLY
-    printf %s\\n "${reply[@]}"
-fi
+# If run as script, then output status string via stdout
+((have_output&&$+Opts[-o]))&&builtin print -r -- $REPLY
+
 return 1-have_output

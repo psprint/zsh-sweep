@@ -10,7 +10,6 @@ builtin emulate -L zsh
 builtin setopt extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd promptsubst
 
-
 export ZSNICK=${ZSNICK:-ZshScan}
 typeset -g -a reply match mbegin mend
 typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
@@ -102,8 +101,8 @@ if [[ ! -f $ZSNFO ]]; then
 fi
 
 # Autoload functions
-autoload -z functions/(zs:#)*~*'~'(#qN.non:t) \
-                functions/*/zs:*~*'~'(#qN.non:t2)
+autoload -z $ZS/functions/(zs:#)*~*'~'(#qN.non:t) \
+                    $ZS/functions/*/zs:*~*'~'(#qN.non:t2)
 
 # Export a few local var
 util/zs::setup-aliases||return 1
