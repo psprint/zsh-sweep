@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+# -*- mode: sh;sh-indentation: 4;indent-tabs-mode: nil;sh-basic-offset: 4; -*-
+#
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+# Recognize and save info on run as `#!/usr/bin/env zsh` script
+[[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set $0 with a new trik - use of %x prompt expansion
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+# The color theme → customize via theme file or ZS global, first testing it
+(
+    {local -A ZS=("${(kv@)ZS}")} ZSIO
+    return 3
+)&&\
+    (($?==3))&&local -A ZS=("${(kv@)ZS}")||local -A ZS
+
+if [[ -f $ZSDIR/themes/$ZSTHEME:t:r.xzt(#qN) || -f ${ZSTHEME::=$ZSDIR/themes/default.xzt} ]]; then
+    local -a q=($ZSDIR/themes/$ZSTHEME(.xzt|)(N) $ZSTHEME(N))
+    eval "ZS=(${(@z)"$(<$q[1])"})" ZSIO||\
+        builtin print -u2 xzmsg:$LINENO Couldn\'t read theme \
+            file $ZSTHEME
+else
+     builtin print -u2 xzmsg:$LINENO Couldn\'t read default \
+        theme \($ZSTHEME\)
+fi
+
+# Return theme
+reply=("${(kv@)ZS}")
+
+return !$#reply
+
+# vim:ft=zsh:sw=4:sts=4:et

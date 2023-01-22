@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+# -*- mode: sh;sh-indentation: 4;indent-tabs-mode: nil;sh-basic-offset: 4; -*-
+#
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+# Recognize and save info on run as `#!/usr/bin/env zsh` script
+[[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent
+
+# Set $0 with a new trik - use of %x prompt expansion
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+#
+# The proper code
+#
+
+local CONTENT_VARNAME=$1 CHKTPE=$2 sp="[[:space:]]##"
+local -a content=("${(P@)CONTENT_VARNAME}") lines
+
+lines=(${(M)content[@]:#*(emulate$~sp*$~sp-o|setopt)*})
+
+printf ·%s\\n Setopt/emulate\ lines: $lines
+# vim:ft=zsh:sw=4:sts=4:et
