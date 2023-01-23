@@ -1,2 +1,1 @@
 {warn}Warning:{txt}%b no {builtin}setopt{txt}%b nor {builtin}emulate… {opt}-o{txt}%b found; it is a good practice to use them in any script or function, with a few of recommended options, like e.g.: {nl}·{builtin}setopt{opt} localoptions extendedglob warncreateglobal typesetsilent noshortloops
-
