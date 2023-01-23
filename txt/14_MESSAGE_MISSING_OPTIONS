@@ -1,0 +1,2 @@
+${${(A)tmparr::=${(f)$(<$ZSDIR/data/recommended_options)}}+}{warn}Warning:{txt}%bsome of the recommended options are missing, the options are: \
+{nl}·%B{opt}${(j:\{txt\}%b\{nl\}·%B\{opt\}:):-$tmparr[@]}{txt}%b

@@ -23,5 +23,6 @@ if [[ ! -d $ZSTXT ]];then
     return 1
 fi
 
-util/zs::read-file $ZSTXT/${IN}_*[^~](#qNnon.,@Y1) subst
+local -a qa=($ZSTXT/${IN}_*[^~](#qNnon.,@Y1))
+(($#qa))&&util/zs::read-file "$qa[1]" subst
 return $?

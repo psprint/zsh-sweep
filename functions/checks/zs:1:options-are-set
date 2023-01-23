@@ -18,11 +18,14 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # The proper code
 #
 
-local CONTENT_VARNAME=$1 CHKTPE=$2 sp="[[:space:]]##"
+local CONTENT_VARNAME=$1 MARR_VARNAME=$2 sp="[[:space:]]##"
 local -a content=("${(P@)CONTENT_VARNAME}") save
 
-repeat 1 {noglob zsfilt CHECK_EMULATE_-O_SETOPT $content;}
+repeat 1 {noglob zsfilt -v $MARR_VARNAME -- CHECK_EMULATE_-O_SETOPT $content;}
 ((!$#reply))&&return RESULT_NO_OPTIONS
+repeat 1 {noglob zsfilt -v $MARR_VARNAME -- CHECK_PROPER_OPTIONS $reply;}
+((!$#reply))&&return RESULT_MISSING_OPTIONS
+
 
 printf ·%s\\n Setopt/emulate\ lines: $reply
 # vim:ft=zsh:sw=4:sts=4:et # vim:ft=zsh:sw=4:sts=4:et# vim:ft=zsh:sw=4:sts=4:et

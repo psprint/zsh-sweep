@@ -24,13 +24,14 @@ trap "unset -f zs-filter ZSIO;return 1" INT
 
 # Input/options
 local -A Opts
-builtin zparseopts -D -E -A Opts -- -fr z o||return 1
+builtin zparseopts -D -E -A Opts -- -fr z o v:||return 1
 
+set -- "${@:#--}"
 # Force output mode when script
 ((bescript))&&Opts[-o]=
 
 # Get runnable or pattern to match
-local PAT_OR_RUN=$1
+local PAT_OR_RUN=$1 MARR_VAR=$Opts[-v]
 shift
 
 # Is there any pattern or runnable to apply?
@@ -58,17 +59,22 @@ local QE EC O
 
 zs-filter()
 {
-    local QT=$1 PAT_OR_RUN=$2 QE=$3
+    local QT=$1 PAT_OR_RUN=$2 QE=$3 MARR_VAR=$4
+    local -a match=() mbegin=() mend=()
+    integer RET
     if [[ $QT == 1 ]];then
         "$PAT_OR_RUN" "$QE" ZSIO
-        return $?
+        RET=$?
     else
-        [[ $QE == $~PAT_OR_RUN ]]
-        return $?
+        [[ $QE == (#b)$~PAT_OR_RUN ]]
+        RET=$?
     fi
+    ((!RET&&$#MARR_VAR))&&: ${(AP@)MARR_VAR::=$match[@]}
+    return RET
 }
+
 for QE; do
-        if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE"; then
+        if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR"; then
             EC+=0
             (($+Opts[-o]))&&builtin print -r -- "$QE"||reply+=("$QE")
         else
