@@ -58,7 +58,7 @@ for Q ($funs);do
     repeat 1 {"$Q" content matcharr;RET=$?;}
     if ((RET));then
         if ! util/zs::get-txt "$RET";then
-            zsmsg -h {err}Error:{txt}Couldn\'t found warning text of num. \
+            zsmsg -h {err}Error:{txt} Couldn\'t found warning text of num. \
                 {quot}\#{num}$RET
         else
             eval REPLY=\"$REPLY\"
