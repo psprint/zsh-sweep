@@ -3,6 +3,7 @@ tag     135
 nick    27
 err     %B203
 warn    %B208
+num     %B135
 file    %B41
 dir     %B39
 path    %B135

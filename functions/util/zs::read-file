@@ -14,6 +14,10 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
+# Input/options
+local -A Opts
+builtin zparseopts -D -E -A Opts -- v || return 1
+
 local IN=$1 WAY=${2:-normal}
 local -a content
 
@@ -37,9 +41,18 @@ if [[ $WAY == normal ]];then
     done<$IN
 # Or via history mechanism
 else
-    (){fc -a -p $IN; content=(${(Oa)history[@]});}
+    (){fc -a -p $IN; content=(${(Oa)history[@]});} ZSIO
 fi
 
 printf »%s\\n $content
+integer RET=$?
+
+(($+Opts[-v]))&&zsmsg -h {warn}Content has {num}$#content{warn} lines
+((RET))&&zsmsg -h {err}Error:{txt} problems reading the file {file}$IN:t{txt} \
+                    (exit code: {num}$RET{txt})
+
+REPLY= reply=("$content[@]")
+
+return RET
 
 # vim:ft=zsh:sw=4:sts=4:et

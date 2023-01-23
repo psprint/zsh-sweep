@@ -11,14 +11,24 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
+# Input/options
+local -A Opts
+builtin zparseopts -D -E -A Opts -- -c || return 1
+
+: ${ZSAES:=$0:h:h/aliases}
+
 if [[ ! -d $ZSAES ]];then
-    zsmsg {err}Error:{txt} alias dir not set
+    zsmsg {err}Error:{txt} alias dir not set ({data}\$ZAES{txt})
     return 1
 fi
 
-# Set up aliases (global, suffix and the proper ones)
-[[ -f $ZSAES/*[^~](#qNY1.) ]]&&for REPLY in $ZSAES/*[^~];do
-    REPLY="$REPLY:t=$(<$REPLY)"
-    alias "${${REPLY#*=}%%:*}" "${(M)REPLY##[^=]##}=${REPLY#*:}"
+local DIR dirs=($ZSAES $ZSAES/checks)
+
+for DIR ($dirs);do
+    # Set up aliases (global, suffix and the proper ones)
+    [[ -f $DIR/*[^~](#qNY1.,@) ]]&&for REPLY in $DIR/*[^~](N.,@);do
+        REPLY="$REPLY:t=$(<$REPLY)"
+        alias "${${REPLY#*=}%%:*}" "${(M)REPLY##[^=]##}=${REPLY#*:}"
+    done
 done
 REPLY=

@@ -48,9 +48,8 @@ if [[ ! -r $WDIR/$IN ]];then
     return 1
 fi
 
-util/zs::read-file $IN normal
-
-local -a content=("${(@f)"$(<$IN)"}")
+util/zs::read-file $IN normal||return 1
+local -a content=("$reply[@]")
 
 local -a funs=(${(on)functions[(I)checks/zs:<->:*]})
 for Q ($funs);do

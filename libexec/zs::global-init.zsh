@@ -16,7 +16,6 @@ typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
 
 # Plugins hash
 typeset -gA Plugins
-print before $Plugins[ZS_GL_SRCD]
 # Already sourced?
 ((Plugins[ZS_GL_SRCD]))&&return 0
 # Mark that init script has been sourced
