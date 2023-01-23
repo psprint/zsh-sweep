@@ -76,7 +76,7 @@ path+=( $ZS/{bin,libexec,functions}(N/) )
 # Modules
 zmodload zsh/parameter zsh/datetime||return 3
 
-export ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL
+export ZSCONFIG ZSNFO ZSCACHE ZSLOG ZSNL ZSTXT
 
  # Right customizable ~/.config/… and ~/.cache/… file paths
 : ${ZSCONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/${(L)ZSNICK}}
@@ -85,6 +85,7 @@ export ZSCONFIG ZSNFO ZSLOG ZSCACHE ZSNL
 : ${ZSLOG:=$ZSCACHE/${(L)ZSNICK}.log}
 : ${ZSNL:=$ZSLOG}
 : ${ZSAES:=$ZSDIR/aliases}
+: ${ZSTXT:=$ZSDIR/txt}
 export ZSNFO=${~ZSNFO} ZSLOG=${~ZSLOG} ZSCACHE=${~ZSCACHE} \
         ZSCONFIG=${~ZSCONFIG} ZSNL=${~ZSNL} ZSAES=${~ZSAES}
 command mkdir -p $ZSNFO:h $ZSLOG:h $ZSCACHE $ZSCONFIG $ZSNL:h $ZSAES:h

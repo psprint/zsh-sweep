@@ -14,7 +14,7 @@ typeset -gA Plugins
 Plugins[ZSDIR]="${0:h}"
 
 # Minimal set of vars
-export ZSDIR="${0:h}" ZSNICK ZSNL ZSTHEME
+export ZSDIR="${0:h}" ZSNICK ZSNL ZSTHEME ZSTXT ZSAES
 
 (($+zs_set_path))&&typeset -gU path=($ZSDIR/bin $path)
 

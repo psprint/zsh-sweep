@@ -32,7 +32,7 @@ fi
 
 # Load file with normal method
 if [[ $WAY == normal ]];then
-    local IFS=$'\n' LINE NL=$'\n'
+    local IFS= LINE NL=$'\n'
     integer IDX=1 INC
     while read -r LINE; do
         ((INC))&&IDX+=1
@@ -50,8 +50,7 @@ integer RET=$?
 ((RET))&&zsmsg -h {err}Error:{txt} problems reading the file {file}$IN:t{txt} \
                     (exit code: {num}$RET{txt})
 
-REPLY= reply=("$content[@]")
-
+REPLY=${(pj:\\n:)content} reply=("$content[@]")
 return RET
 
 # vim:ft=zsh:sw=4:sts=4:et
