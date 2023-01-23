@@ -21,7 +21,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 local CONTENT_VARNAME=$1 CHKTPE=$2 sp="[[:space:]]##"
 local -a content=("${(P@)CONTENT_VARNAME}") lines
 
-lines=(${(M)content[@]:#*(emulate$~sp*$~sp-o|setopt)*})
+repeat 1 {noglob zsfilt CHECK_EMULATE_-O_SETOPT $content;}
 
-printf ·%s\\n Setopt/emulate\ lines: $lines
+printf ·%s\\n Setopt/emulate\ lines: $reply
 # vim:ft=zsh:sw=4:sts=4:et # vim:ft=zsh:sw=4:sts=4:et# vim:ft=zsh:sw=4:sts=4:et

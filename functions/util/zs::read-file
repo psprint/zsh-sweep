@@ -44,7 +44,6 @@ else
     (){fc -a -p $IN; content=(${(Oa)history[@]});} ZSIO
 fi
 
-printf »%s\\n $content
 integer RET=$?
 
 (($+Opts[-v]))&&zsmsg -h {warn}Content has {num}$#content{warn} lines
