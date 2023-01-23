@@ -22,7 +22,7 @@ local CONTENT_VARNAME=$1 CHKTPE=$2 sp="[[:space:]]##"
 local -a content=("${(P@)CONTENT_VARNAME}") save
 
 repeat 1 {noglob zsfilt CHECK_EMULATE_-O_SETOPT $content;}
-((!$#reply))&&return RES_NO_OPTIONS
+((!$#reply))&&return RESULT_NO_OPTIONS
 
 printf ·%s\\n Setopt/emulate\ lines: $reply
 # vim:ft=zsh:sw=4:sts=4:et # vim:ft=zsh:sw=4:sts=4:et# vim:ft=zsh:sw=4:sts=4:et
