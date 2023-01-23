@@ -54,7 +54,7 @@ integer RET
 
 local -a funs=(${(on)functions[(I)checks/zs:<->:*]})
 for Q ($funs);do
-    zsmsg {warn}Warning: running check: {func}${Q/[^\/]#\/zs:<->:}
+    zsmsg -h {warn}Warning:%b running check: {func}${Q/[^\/]#\/zs:<->:}{warn}%b…
     repeat 1 {"$Q" content Q;RET=$?;}
     if ((RET));then
         if ! util/zs::get-txt $RET;then

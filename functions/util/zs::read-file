@@ -20,6 +20,7 @@ builtin zparseopts -D -E -A Opts -- v || return 1
 
 local IN=$1 WAY=${2:-normal}
 local -a content
+REPLY= reply=()
 
 # Verify input arguments
 if [[ $IN == WRONGSTR ]]; then
@@ -40,8 +41,13 @@ if [[ $WAY == normal ]];then
         content[IDX]+=${LINE%%[\\$NL]##}
     done<$IN
 # Or via history mechanism
-else
+elif [[ $WAY == history ]];then
     (){fc -a -p $IN; content=(${(Oa)history[@]});} ZSIO
+elif [[ $WAY == subst ]];then
+    content=("$(<$IN)")
+else
+    zswarn Unknown read-file method given ({opt}$WAY{txt}), couldn\'t read \
+        file: {file}$IN:t
 fi
 
 integer RET=$?

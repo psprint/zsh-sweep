@@ -23,5 +23,5 @@ if [[ ! -d $ZSTXT ]];then
     return 1
 fi
 
-util/zs::read-file $ZSTXT/${IN}_* normal
+util/zs::read-file $ZSTXT/${IN}_*[^~](#qNnon.,@Y1) subst
 return $?

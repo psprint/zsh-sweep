@@ -36,6 +36,8 @@ Plugins[ZS_GL_SRCD]=1
     fi
 }
 alias zsmsg='noglob zsmsg_ $0:t\:$LINENO'
+alias zswarn='noglob zsmsg_ $0:t\:$LINENO {warn}Warning:{txt}'
+alias zserr='noglob zsmsg_ $0:t\:$LINENO {err}Error:{txt}'
 # ]]]
 
 # Run as script? ZSH_SCRIPT is a Zsh 5.3 addition
