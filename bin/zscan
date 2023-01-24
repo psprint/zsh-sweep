@@ -62,7 +62,7 @@ for Q ($funs);do
                 {quot}\#{num}$RET
         else
             eval REPLY=\"$REPLY\"
-            zsmsg -h $(REPLY="$REPLY";print -- $REPLY)
+            zsmsg -h ${(Q)REPLY}
         fi
     fi
 done

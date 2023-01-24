@@ -10,12 +10,11 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+: ${ZSAES:=$ZSDIR/aliases}
 
 # Input/options
 local -A Opts
 builtin zparseopts -D -E -A Opts -- -c || return 1
-
-: ${ZSAES:=$0:h:h/aliases}
 
 if [[ ! -d $ZSAES ]];then
     zsmsg {err}Error:{txt} alias dir not set ({data}\$ZSAES{txt})

@@ -15,6 +15,8 @@ Plugins[ZSDIR]="${0:h}"
 
 # Minimal set of vars
 export ZSDIR="${0:h}" ZSNICK ZSNL ZSTHEME ZSTXT ZSAES
+ZSTXT=${ZSTXT:=$ZSDIR/txt}
+ZSAES=${ZSAES:=$ZSDIR/aliases}
 
 (($+zs_set_path))&&typeset -gU path=($ZSDIR/bin $path)
 

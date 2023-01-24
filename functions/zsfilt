@@ -66,7 +66,8 @@ zs-filter()
         "$PAT_OR_RUN" "$QE" ZSIO
         RET=$?
     else
-        [[ $QE == (#b)$~PAT_OR_RUN ]]
+        # eval to expand global alias in $PAT_OR_RUN
+        eval "[[ ${(q)QE} == $PAT_OR_RUN ]]"
         RET=$?
     fi
     ((!RET&&$#MARR_VAR))&&: ${(AP@)MARR_VAR::=$match[@]}
