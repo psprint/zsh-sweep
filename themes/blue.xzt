@@ -4,6 +4,7 @@ nick    27
 err     %B205
 warn    %B135
 builtin %B39
+data    %B70
 num     %B27
 file    %B41
 dir     %B39

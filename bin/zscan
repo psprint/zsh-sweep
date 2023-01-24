@@ -20,7 +20,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 # -# offset of the picked °feature° when multiple match
 # -l show files in the °feature°
 local -A Opts
-builtin zparseopts -D -E -A Opts -- v C:||return 7
+builtin zparseopts -D -E -A Opts -- v -func -script C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'
@@ -56,15 +56,29 @@ integer RET
 
 checks=(${=$(<$ZSDIR/checks.dat)})
 eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
+(($+Opts[--func]))&&checks=(${checks:#script:*})
+(($+Opts[--script]))&&checks=(${checks:#func:*})
 
 for Q ($checks);do
-    zsmsg -h {note}Notice:%b running check: {func}$Q{warn}%b…
+    local QC=${Q#(script|func):}
+    zsmsg -h {note}Notice:%b running check: {func}$QC{warn}%b…
+
+    # Check is loaded properly?
+    if ! checks/zs::verify-check "$QC";then
+        zserr Couldn\'t find data of check {data}$QC{txt}, check installation
+        continue
+    fi
+
+    #
+    # Main check exec code
+    #
     repeat 1 {noglob checks/zs::run-check "$Q" content match_array;RET=$?;}
     out=($reply)
+
     if ((RET));then
         for QE ($out);do
             if ! util/zs::get-txt "$QE";then
-                zsmsg -h {err}Error:{txt} Couldn\'t found warning text of num. \
+                zserr Couldn\'t found warning text of num. \
                     {quot}\#{num}$QE
             else
                 eval REPLY=\"$REPLY\"
