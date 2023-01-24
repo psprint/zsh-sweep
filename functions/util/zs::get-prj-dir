@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::get-prj-dir() {
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
@@ -32,3 +34,5 @@ if [[ $PRJ == WRONGSTR ]]; then
     return 1
 fi
 return 0
+
+}

@@ -1,0 +1,5 @@
+{txt}%bThe file {file}$QData[file-name]{txt}%b should contain function \
+preamble of the same name, i.e.: {code}$QData[file-name]() \\\{…}{txt}%b so \
+that e.g. tools like {nick}Universal Ctags{txt}%b can recognize them. Autoload \
+functions are allowed to contain such preamble, if only it\'s of the same name \
+as the file.

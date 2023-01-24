@@ -19,5 +19,6 @@ ZSTXT=${ZSTXT:=$ZSDIR/txt}
 ZSAES=${ZSAES:=$ZSDIR/aliases}
 
 (($+zs_set_path))&&typeset -gU path=($ZSDIR/bin $path)
-
+autoload -z $PWD/functions/util/zs::setup-aliases
+zs::setup-aliases
 # vim:ft=zsh:tw=80:sw=4:sts=4:et:foldmarker=[[[,]]]

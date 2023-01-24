@@ -4,6 +4,8 @@
 # zsqb – zs…quote…braces
 #
 
+zsqb() {
+
 # Run as script?
 [[ $0 != zsqb ]]&&integer bescript=1
 
@@ -26,3 +28,5 @@ local q='{' qn='\\{'
 REPLY=${(j: :)${@//$q/$qn}}
 
 (($+Opts[-o]))&&print -r -- $REPLY
+
+}

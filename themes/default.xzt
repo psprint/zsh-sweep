@@ -4,6 +4,10 @@ nick    27
 err     %B203
 warn    %B208
 builtin %B179
+code    %B135
+nick    %B179
+chk     %B105
+type    %B174
 data    %B70
 num     %B135
 file    %B41

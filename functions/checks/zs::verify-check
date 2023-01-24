@@ -4,6 +4,8 @@
 # zsqb – zs…quote…braces
 #
 
+checks/zs::verify-check() {
+
 # Run as script?
 [[ $0 != zsqb ]]&&integer bescript=1
 
@@ -21,3 +23,5 @@ builtin zparseopts -D -E -A Opts --||return 7
 local CHECK=$1
 [[ -n $galiases[$CHECK] ]]
 return $?
+
+}

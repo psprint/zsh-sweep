@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::verify-zscan-dir() {
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
@@ -16,3 +18,5 @@ if [[ ! -d $TIG_SUITE_DIR || ! -f $0 || ! -r $0 ]];then
 fi
 
 return 0
+
+}

@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::setup-aliases() {
+
 #
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
@@ -31,3 +33,5 @@ for DIR ($dirs);do
     done
 done
 REPLY=
+
+}

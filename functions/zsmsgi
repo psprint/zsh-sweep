@@ -4,6 +4,8 @@
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
 
+zsmsgi() {
+
 #
 # This function is special, because it doesn't source global-init
 # script because there are calls to this function, leading to
@@ -103,3 +105,5 @@ builtin print -r $n $err -P -- "${REPLY//$q/$qn}" "%k%f%b%u"
 REPLY=1
 
 # vim:ft=zsh:sw=4:sts=4:et
+
+}

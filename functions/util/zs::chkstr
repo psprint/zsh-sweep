@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::chkstr() {
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
@@ -28,3 +30,5 @@ done
 
 # REPLY is used to mark that zsmsg has been run
 return REPLY
+
+}

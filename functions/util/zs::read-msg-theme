@@ -4,6 +4,8 @@
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
 
+util/zs::read-msg-theme() {
+
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
 [[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
@@ -34,3 +36,4 @@ reply=("${(kv@)ZS}")
 return !$#reply
 
 # vim:ft=zsh:sw=4:sts=4:et
+}

@@ -1,1 +1,2 @@
 # zsh-scan
+setopt noglobdots

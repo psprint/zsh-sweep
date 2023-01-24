@@ -23,21 +23,18 @@ Plugins[ZS_GL_SRCD]=1
 # FUNCZSION: zsmsg [[[
 # An wrapping function that looks for backend outputting function
 # and uses a verbatim `print` builtin otherwise.
-\zsmsg_()
+zsmsg_()
 {
-    if (($+functions[zsmsg])); then
-        \zsmsg "$@"
-    elif [[ -x $ZSDIR/functions/zsmsg ]]; then
-        $ZSDIR/functions/zsmsg "$@"
-    elif (($+commands[zsmsg])); then
-        command zsmsg "$@"
+    if (($+functions[zsmsgi])); then
+        \zsmsgi "$@"
+    elif [[ -x $ZSDIR/functions/zsmsgi ]]; then
+        $ZSDIR/functions/zsmsgi "$@"
+    elif (($+commands[zsmsgi])); then
+        command zsmsgi "$@"
     else
-        builtin print -- ${@${@//(%f|%B|%F|%f)/}//\{[^\}]##\}/}
+        builtin print -r -- ${(@)${@//(%f|%B|%F|%f)/}//\{[^\}]##\}/}
     fi
 }
-alias zsmsg='noglob zsmsg_ $0:t\:$LINENO'
-alias zswarn='noglob zsmsg_ $0:t\:$LINENO {warn}Warning:{txt}'
-alias zserr='noglob zsmsg_ $0:t\:$LINENO {err}Error:{txt}'
 # ]]]
 
 # Run as script? ZSH_SCRIPT is a Zsh 5.3 addition

@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::verify-cid() {
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
@@ -23,3 +25,4 @@ if ! command git rev-parse --verify --quiet $CID\^{commit} ZSIO;then
 fi
 
 return 0
+}

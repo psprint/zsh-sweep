@@ -4,6 +4,8 @@
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
 
+checks/zs::run-check() {
+
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
 [[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
@@ -18,8 +20,9 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # The proper code
 #
 
-local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3 qsp="[[:space:]]##" qnl=$'\n'
+local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
+local qsp='[[:space:]]##' qosp='[[:space:]]#' qob='{' qcb='}' qnl=$'\n'
 
 repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
 ((!$#reply))&&save+=($ErrMap[$CHECK])
@@ -29,3 +32,4 @@ repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
 reply=($save)
 return $#reply
 # vim:ft=zsh:sw=4:sts=4:et # vim:ft=zsh:sw=4:sts=4:et# vim:ft=zsh:sw=4:sts=4:et
+}

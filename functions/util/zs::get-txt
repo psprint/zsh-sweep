@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::get-txt() {
+
 #
 # Copyright (c) 2023 Sebastian Gniazdowski
 #
@@ -26,3 +28,5 @@ fi
 local -a qa=($ZSTXT/${IN}_*[^~](#qNnon.,@Y1))
 (($#qa))&&util/zs::read-file "$qa[1]" subst
 return $?
+
+}

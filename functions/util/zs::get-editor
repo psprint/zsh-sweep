@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+util/zs::get-editor() {
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent
@@ -27,3 +29,5 @@ local qed=$qed1
 
 REPLY=$qed
 [[ -n $REPLY ]]
+
+}

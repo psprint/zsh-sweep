@@ -1,89 +1,36 @@
 #!/usr/bin/env zsh
 # Copyright (c) 2023 Sebastian Gniazdowski
+#
+# zsqb – zs…quote…braces
+#
 
-# Recognize and save info on run as `#!/usr/bin/env zsh` script
-[[ $0 != zscan || -n $ZSH_SCRIPT ]]&&integer bescript=1
+# Run as script?
+[[ $0 != zscan ]]&&integer bescript=1
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
-            -o warncreateglobal -o typesetsilent -o nopromptsubst
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst
 
-# $0 support
+# Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+: ${ZSDIR:=$0:h:h}
 
 # Load initialization script
 source "$0:h:h"/libexec/zs::global-init.zsh
 
-# -v verbose
-# -G no cd, absolute paths
-# -s select visually
-# -# offset of the picked °feature° when multiple match
-# -l show files in the °feature°
 local -A Opts
-builtin zparseopts -D -E -A Opts -- v -func -script C:||return 7
+local -a opts
+local QE
+builtin zparseopts -D -E -A Opts -- v -func=opts -script=opts C:=opts||return 7
 
-if (($+Opts[-h]||$+Opts[--help]));then
-    local nl=$'\n'
-    tigmsg %B{33}zscan%b -vGghl\# %B{41}\<°feature-ID°\>$nl\
-    return 0
-fi
-
-# Automatic -C value
-: ${Opts[-C]:=$PWD}
-
-# Get work directory path
-local WDIR=$Opts[-C]
-
-if [[ ! -d $WDIR ]];then
-    zsmsg -h {err}Error: The path {path}$WDIR{err} \
-        isn\'t a directory
-fi
-
-# Establish text editor
-util/zs::get-editor||return 1
-
-local IN=$1 QED=$REPLY Q QE
-if [[ ! -r $WDIR/$IN ]];then
-    zsmsg -h {err}Error:{txt} input file \
-        {quot}\"{file}$IN{quot}\"{txt} doesn\'t exist
-    return 1
-fi
-
-util/zs::read-file $IN normal||return 1
-local -a content=("$reply[@]") checks out match_array
-local -A ErrMap
-integer RET
-
-checks=(${=$(<$ZSDIR/checks.dat)})
-eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
-(($+Opts[--func]))&&checks=(${checks:#script:*})
-(($+Opts[--script]))&&checks=(${checks:#func:*})
-
-for Q ($checks);do
-    local QC=${Q#(script|func):}
-    zsmsg -h {note}Notice:%b running check: {func}$QC{warn}%b…
-
-    # Check is loaded properly?
-    if ! checks/zs::verify-check "$QC";then
-        zserr Couldn\'t find data of check {data}$QC{txt}, check installation
-        continue
-    fi
-
-    #
-    # Main check exec code
-    #
-    repeat 1 {noglob checks/zs::run-check "$Q" content match_array;RET=$?;}
-    out=($reply)
-
-    if ((RET));then
-        for QE ($out);do
-            if ! util/zs::get-txt "$QE";then
-                zserr Couldn\'t found warning text of num. \
-                    {quot}\#{num}$QE
-            else
-                eval REPLY=\"$REPLY\"
-                zsmsg -h ${(Q)REPLY}
-            fi
-        done
-    fi
+((!$+Opts[--func]&&!$+Opts[--script]))&&zswarn No {opt}--func{txt} nor \
+                    {opt}--script{txt} options given, will run both \
+                    script and autoload-function checks on all input files
+integer qe
+for QE;do
+    ((qe))&&print
+    zsmsg -h {err}Notice: scanning file: {quot}•{warn}${(U)QE}{quot}•{txt}…
+    $ZSDIR/libexec/zscan $opts $QE
+    qe=1
 done

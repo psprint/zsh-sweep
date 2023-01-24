@@ -4,6 +4,8 @@
 # xzmap – extras function – map function/command to array
 #
 
+zsfilt() {
+
 # Run as script?
 integer bescript=${${0:#zsfilt}:+1}
 
@@ -74,6 +76,12 @@ zs-filter()
     return RET
 }
 
+if [[ -z $PAT_OR_RUN ]]|| \
+    {! checks/zs::verify-check "$PAT_OR_RUN"&&((!$+Opts[--fr]));}
+then
+    zswarn Check {data}$PAT_OR_RUN{txt} couldn\'t be found
+    return 0
+fi
 for QE; do
         if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR"; then
             EC+=0
@@ -97,3 +105,5 @@ REPLY=$EC
 ((have_output&&$+Opts[-o]))&&builtin print -r -- $REPLY
 
 return 1-have_output
+
+}
