@@ -8,7 +8,7 @@
 # Set the base and typically useful options
 builtin emulate -L zsh
 builtin setopt extendedglob warncreateglobal typesetsilent \
-                noshortloops noautopushd promptsubst
+                noshortloops noautopushd nopromptsubst
 
 export ZSNICK=${ZSNICK:-ZshScan}
 typeset -g -a reply match mbegin mend

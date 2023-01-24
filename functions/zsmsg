@@ -96,7 +96,8 @@ REPLY="${REPLY//$HOME/~}"
 
 # Output
 #printf %s\\n
-builtin print -r $n $err -P -- "$REPLY" "%k%f%b%u"
+local q='\{' qn='{'
+builtin print -r $n $err -P -- "${REPLY//$q/$qn}" "%k%f%b%u"
 
 # Mark that zsmsg has run, to use in [[…]]&&zsmsg … cascades
 REPLY=1

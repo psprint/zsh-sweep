@@ -6,7 +6,7 @@
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
-            -o warncreateglobal -o typesetsilent
+            -o warncreateglobal -o typesetsilent -o nopromptsubst
 
 # $0 support
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
@@ -20,7 +20,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 # -# offset of the picked °feature° when multiple match
 # -l show files in the °feature°
 local -A Opts
-builtin zparseopts -D -E -A Opts -- v -C:||return 7
+builtin zparseopts -D -E -A Opts -- v C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'
@@ -31,6 +31,7 @@ fi
 # Automatic -C value
 : ${Opts[-C]:=$PWD}
 
+# Get work directory path
 local WDIR=$Opts[-C]
 
 if [[ ! -d $WDIR ]];then
@@ -41,7 +42,7 @@ fi
 # Establish text editor
 util/zs::get-editor||return 1
 
-local IN=$1 QED=$REPLY Q
+local IN=$1 QED=$REPLY Q QE
 if [[ ! -r $WDIR/$IN ]];then
     zsmsg -h {err}Error:{txt} input file \
         {quot}\"{file}$IN{quot}\"{txt} doesn\'t exist
@@ -49,20 +50,26 @@ if [[ ! -r $WDIR/$IN ]];then
 fi
 
 util/zs::read-file $IN normal||return 1
-local -a content=("$reply[@]")
+local -a content=("$reply[@]") checks out match_array
+local -A ErrMap
 integer RET
 
-local -a funs=(${(on)functions[(I)checks/zs:<->:*]}) matcharr
-for Q ($funs);do
-    zsmsg -h {warn}Warning:%b running check: {func}${Q/[^\/]#\/zs:<->:}{warn}%b…
-    repeat 1 {"$Q" content matcharr;RET=$?;}
+checks=(${=$(<$ZSDIR/checks.dat)})
+eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
+
+for Q ($checks);do
+    zsmsg -h {warn}Warning:%b running check: {func}$Q{warn}%b…
+    repeat 1 {noglob checks/zs::run-check "$Q" content match_array;RET=$?;}
+    out=($reply)
     if ((RET));then
-        if ! util/zs::get-txt "$RET";then
-            zsmsg -h {err}Error:{txt} Couldn\'t found warning text of num. \
-                {quot}\#{num}$RET
-        else
-            eval REPLY=\"$REPLY\"
-            zsmsg -h ${(Q)REPLY}
-        fi
+        for QE ($out);do
+            if ! util/zs::get-txt "$QE";then
+                zsmsg -h {err}Error:{txt} Couldn\'t found warning text of num. \
+                    {quot}\#{num}$QE
+            else
+                eval REPLY=\"$REPLY\"
+                zsmsg -h ${(Q)REPLY}
+            fi
+        done
     fi
 done

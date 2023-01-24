@@ -1,0 +1,4 @@
+${${(A)tmparr::=${(f)$(<$ZSDIR/data/17_recommended_0_assignment)}}+}\
+{warn}Warning:{txt}%b \$0 isn\'t the standard one, it\'s best if it\'s:\
+{nl}{err}·{txt}$(zsqb -o $tmparr[@])
+
