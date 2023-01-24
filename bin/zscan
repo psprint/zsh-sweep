@@ -58,7 +58,7 @@ checks=(${=$(<$ZSDIR/checks.dat)})
 eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
 
 for Q ($checks);do
-    zsmsg -h {warn}Warning:%b running check: {func}$Q{warn}%b…
+    zsmsg -h {note}Notice:%b running check: {func}$Q{warn}%b…
     repeat 1 {noglob checks/zs::run-check "$Q" content match_array;RET=$?;}
     out=($reply)
     if ((RET));then

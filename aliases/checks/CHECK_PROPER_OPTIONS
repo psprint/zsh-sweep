@@ -1,1 +1,1 @@
--g:(#b)(#i)*(local[_]#options|emulate[[:space:]]##-L)*~^*[[:space:]]##(typeset[_]#silent)*~^*(warn[_]#create[_]#global)*~^*(no[_]#short[_]#loops)*
+-g:(#b)(#i)*(local[_]#options|emulate[[:space:]]##-L)*~^*[[:space:]]##(typeset[_]#silent)*~^*(warn[_]#create[_]#global)*~^*(no[_]#short[_]#loops)*~^*(no[_]#prompt[_]#subst)*
