@@ -16,6 +16,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+: ${ZSDIR:=$0:h:h:h}
 
 #
 # The proper code
@@ -23,9 +24,8 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
-local qsp='[[:space:]]##' qosp='[[:space:]]#' qob='{' qcb='}' qnl=$'\n' \
-        qnos='[^[:space:]]##' qnoos='[^[:space:]]#'
 
+source $ZSDIR/libexec/zs::std-vars.inc.zsh
 repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
 ((!$#reply))&&save+=($ErrMap[$CHECK])
 
