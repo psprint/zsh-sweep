@@ -9,9 +9,10 @@ checks/zs::run-check() {
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
 [[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
-# Set options
+
 builtin emulate -L zsh -o extendedglob -o noshortloops \
-                        -o warncreateglobal -o typesetsilent
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst
 
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
@@ -22,7 +23,8 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
-local qsp='[[:space:]]##' qosp='[[:space:]]#' qob='{' qcb='}' qnl=$'\n'
+local qsp='[[:space:]]##' qosp='[[:space:]]#' qob='{' qcb='}' qnl=$'\n' \
+        qnos='[^[:space:]]##' qnoos='[^[:space:]]##'
 
 repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
 ((!$#reply))&&save+=($ErrMap[$CHECK])

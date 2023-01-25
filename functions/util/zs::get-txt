@@ -8,7 +8,8 @@ util/zs::get-txt() {
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
-                        -o warncreateglobal -o typesetsilent
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst
 
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}

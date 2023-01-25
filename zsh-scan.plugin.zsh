@@ -15,10 +15,12 @@ Plugins[ZSDIR]="${0:h}"
 
 # Minimal set of vars
 export ZSDIR="${0:h}" ZSNICK ZSNL ZSTHEME ZSTXT ZSAES
-ZSTXT=${ZSTXT:=$ZSDIR/txt}
-ZSAES=${ZSAES:=$ZSDIR/aliases}
+: ${ZSTXT:=$ZSDIR/txt}
+: ${ZSAES:=$ZSDIR/aliases}
 
+# Accessing the binary
 (($+zs_set_path))&&typeset -gU path=($ZSDIR/bin $path)
+
 autoload -z $PWD/functions/util/zs::setup-aliases
 zs::setup-aliases
 # vim:ft=zsh:tw=80:sw=4:sts=4:et:foldmarker=[[[,]]]

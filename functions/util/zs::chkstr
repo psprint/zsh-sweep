@@ -2,9 +2,13 @@
 
 util/zs::chkstr() {
 
+# Run as script?
+[[ $0 != */zs::chkstr ]]&&integer bescript=1
+
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
-                        -o warncreateglobal -o typesetsilent
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst
 
 # $0 support
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}

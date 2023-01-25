@@ -7,7 +7,7 @@
 checks/zs::verify-check() {
 
 # Run as script?
-[[ $0 != zsqb ]]&&integer bescript=1
+[[ $0 != */zs::verify-check ]]&&integer bescript=1
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
