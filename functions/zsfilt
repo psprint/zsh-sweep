@@ -27,7 +27,7 @@ trap "unset -f zs-filter ZSIO;return 1" INT
 
 # Input/options
 local -A Opts
-builtin zparseopts -D -E -A Opts -- -fr z o v:||return 1
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- -fr z o v:||return 1
 
 set -- "${@:#--}"
 # Force output mode when script

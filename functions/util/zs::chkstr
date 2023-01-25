@@ -16,7 +16,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # -v verbose
 # -G no cd, absolute paths
 local -A Opts
-builtin zparseopts -D -E -A Opts -- || return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- || return 7
 
 # Support running without quoting of the argument var
 builtin set -- ${@[@]:-""}

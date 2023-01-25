@@ -20,7 +20,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 # -# offset of the picked °feature° when multiple match
 # -l show files in the °feature°
 local -A Opts QData
-builtin zparseopts -D -E -A Opts -- v -func -script C:||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- v -func -script C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'

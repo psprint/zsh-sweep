@@ -18,7 +18,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
 local -A Opts
-builtin zparseopts -D -E -A Opts --||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts --||return 7
 
 local CHECK=$1
 [[ -n $galiases[$CHECK] ]]

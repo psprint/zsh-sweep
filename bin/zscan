@@ -22,7 +22,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 local -A Opts
 local -a opts
 local QE
-builtin zparseopts -D -E -A Opts -- v -func=opts -script=opts C:=opts||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- v -func=opts -script=opts C:=opts||return 7
 
 ((!$+Opts[--func]&&!$+Opts[--script]))&&zswarn No {opt}--func{txt} nor \
                     {opt}--script{txt} options given, will run both \
