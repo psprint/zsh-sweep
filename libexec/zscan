@@ -67,10 +67,10 @@ eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
 for Q ($checks);do
     local QC=${Q#(script|func):}
     local QT=both
-    [[ $Q == script:* ]]&&QT=script
-    [[ $Q == func:* ]]&&QT=function
+    [[ $Q == script:* ]]&&QT=script\ 
+    [[ $Q == func:* ]]&&QT=function\ 
 
-    zsmsg -h {note}Notice:%b running {type}${QT:#both}{note} check: \
+    zsmsg -h {note}Notice:%b running {type}${QT:#both}{note}check: \
         {chk}$QC{warn}%b…
 
     # Check is loaded properly?
