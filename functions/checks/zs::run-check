@@ -24,7 +24,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
 local qsp='[[:space:]]##' qosp='[[:space:]]#' qob='{' qcb='}' qnl=$'\n' \
-        qnos='[^[:space:]]##' qnoos='[^[:space:]]##'
+        qnos='[^[:space:]]##' qnoos='[^[:space:]]#'
 
 repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
 ((!$#reply))&&save+=($ErrMap[$CHECK])
