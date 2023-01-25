@@ -37,7 +37,7 @@ if [[ $WAY == normal ]];then
     integer IDX=1 INC
     while read -r LINE; do
         ((INC))&&IDX+=1
-        [[ $LINE == *[\\] ]]&&INC=0||INC=1
+        [[ $LINE == *([\\]|\|\||\&\&) ]]&&INC=0||INC=1
         content[IDX]+=${LINE%%[\\$NL]##}
     done<$IN
 # Or via history mechanism
