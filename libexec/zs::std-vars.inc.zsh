@@ -4,4 +4,7 @@ local \
     qosp='[[:space:]]#' \
     qnosp='[^[:space:]]##' qnoosp='[^[:space:]]#' \
     qnl=$'\n' \
-    qinc=/
+    qinc=/ \
+    qnoalnum='[^[:alnum:]]##' \
+    qnooalnum='[^[:alnum:]]#'
+

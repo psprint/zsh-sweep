@@ -1,1 +1,1 @@
--g:*(zparseopts)*$~qsp(-F|)*
+-g:4:(#s)(${~qosp}builtin$~qsp|$qosp)zparseopts(*~*-F*~*-)(-F|)*

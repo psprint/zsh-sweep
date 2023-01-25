@@ -1,3 +1,3 @@
-${${(A)tmparr::=${(f)$(<$ZSDIR/data/14_recommended_options)}}+}{warn}Warning:\
-{txt}%b recommended options are missing, the options are: \
+${${(A)tmparr::=${(f)$(<$ZSDIR/data/14_recommended_options)}}+}\
+%brecommended options are missing, the options are: \
 {nl}{err}·%B{txt}${(j:\{txt\}\{nl\}\{err\}·%B\{txt\}:):-$tmparr[@]}%b

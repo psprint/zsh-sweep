@@ -62,7 +62,7 @@ local QE EC O
 
 zs-filter()
 {
-    local QT=$1 PAT_OR_RUN=$2 QE=$3 MARR_VAR=$4 UNWIND
+    local QT=$1 PAT_OR_RUN=$2 QE=$3 MARR_VAR=$4 UNWIND QCON
     local -a match=() mbegin=() mend=()
     integer RET
     if [[ $QT == 1 ]];then
@@ -70,12 +70,24 @@ zs-filter()
         RET=$?
     else
         # eval to expand global alias in $PAT_OR_RUN
-        UNWIND=$galiases[$PAT_OR_RUN]
-        eval "QE=\${(S)QE//#%$UNWIND/°match°}"
-        [[ $QE == °match° ]]
-        RET=$?
+        UNWIND=${galiases[$PAT_OR_RUN]##(!|)<->##:} \
+            QCON=${(M)galiases[$PAT_OR_RUN]##(!|)<->##}
+        # Prepare match vars
+        match=() mbegin=() mend=()
+        eval "QE=\${(S)QE//#%(#b)(#i)($UNWIND)/°match°}"
+        if [[ $QE == °match° && -n $QCON ]];then
+            if [[ $QCON == \!* ]];then
+                [[ -z $match[${QCON#\!}] ]]
+            else
+                [[ -n $match[$QCON] ]]
+            fi
+            RET=$?
+        elif [[ $QE == °match° ]];then
+            RET=0
+        else
+            RET=1
+        fi
     fi
-    ((!RET&&$#MARR_VAR))&&: ${(AP@)MARR_VAR::=$match[@]}
     return RET
 }
 
