@@ -59,7 +59,8 @@ local -a content=("$reply[@]") checks out match_array
 local -A ErrMap
 integer RET
 
-checks=(${=$(<$ZSDIR/checks.dat)})
+# Read checks removing comments
+checks=(${=${"$(<$ZSDIR/checks.dat)"//\#[^#]##($'\n'|(#e))}})
 eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
 (($+Opts[--func]))&&checks=(${checks:#script:*})
 (($+Opts[--script]))&&checks=(${checks:#func:*})
@@ -71,7 +72,7 @@ for Q ($checks);do
     [[ $Q == func:* ]]&&QT=function\ 
 
     zsmsg -h {note}Notice:%b running {type}${QT:#both}{note}check: \
-        {chk}$QC{warn}%b…
+        {chk}${QC#\!}{warn}%b…
 
     # Check is loaded properly?
     if ! checks/zs::verify-check "$QC";then
@@ -84,7 +85,6 @@ for Q ($checks);do
     #
     repeat 1 {noglob checks/zs::run-check "$QC" content match_array;RET=$?;}
     out=($reply)
-
     if ((RET));then
         for QE ($out);do
             if ! util/zs::get-txt "$QE";then

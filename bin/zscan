@@ -27,10 +27,9 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- 
 ((!$+Opts[--func]&&!$+Opts[--script]))&&zswarn No {opt}--func{txt} nor \
                     {opt}--script{txt} options given, will run both \
                     script and autoload-function checks on all input files
-integer qe
 for QE;do
-    ((qe))&&print
+    print
     zsmsg -h {err}Notice: scanning file: {quot}•{warn}${(U)QE}{quot}•{txt}…
+    print
     $ZSDIR/libexec/zscan $opts $QE
-    qe=1
 done

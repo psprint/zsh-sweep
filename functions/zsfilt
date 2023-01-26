@@ -58,31 +58,46 @@ fi
 
 # Initialize vars
 REPLY= reply=()
-local QE EC O
+local QE QECODES O
+integer QRET QOPT_GFLAG QHAVE_OUTPUT QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1}
+local PAT_OR_RUN=${PAT_OR_RUN#\!}
+# Get the transported text from global alias
+local QUNWIND=${galiases[$PAT_OR_RUN]##(!|)<->##:} \
+        QCONDITON=${(M)galiases[$PAT_OR_RUN]##(!|)<->##}
 
 zs-filter()
 {
-    local QT=$1 PAT_OR_RUN=$2 QE=$3 MARR_VAR=$4 UNWIND QCON
+    local QT=$1 PAT_OR_RUN=$2 INPUT=$3 MARR_VAR=$4
     local -a match=() mbegin=() mend=()
     integer RET
     if [[ $QT == 1 ]];then
-        "$PAT_OR_RUN" "$QE" ZSIO
+        "$PAT_OR_RUN" "$INPUT" ZSIO
         RET=$?
     else
-        # eval to expand global alias in $PAT_OR_RUN
-        UNWIND=${galiases[$PAT_OR_RUN]##(!|)<->##:} \
-            QCON=${(M)galiases[$PAT_OR_RUN]##(!|)<->##}
         # Prepare match vars
         match=() mbegin=() mend=()
-        eval "QE=\${(S)QE//#%(#b)(#i)($UNWIND)/°match°}"
-        if [[ $QE == °match° && -n $QCON ]];then
-            if [[ $QCON == \!* ]];then
-                [[ -z $match[${QCON#\!}] ]]
-            else
-                [[ -n $match[$QCON] ]]
-            fi
-            RET=$?
-        elif [[ $QE == °match° ]];then
+        eval "INPUT=\${(S)INPUT//#%(#b)(#i)($QUNWIND)/°match°}"
+        if [[ $INPUT == °match° && -n $QCONDITON ]];then
+            if [[ $QCONDITON == \!* ]];then
+                [[ -z $match[${QCONDITON#\!}] ]]
+                RET=$?
+           else
+                [[ -n $match[$QCONDITON] ]]
+                RET=$?
+           fi
+            # Optional matching makes sense only for …:QCON:… condition,
+            # so set the QOPT_FLAG only in this if-branch.
+            # QOPT_GFLAG equal to 1 means: the pattern matched, but
+            # QCONDITON didn't hold, so return false even if there has
+            # been °match° in the string. It's basically a second-stage
+            # check – the QCONDITON must hold here
+            QOPT_GFLAG+=RET
+            # Save the matched line regardless of the QCONDITON result
+            RET=0
+            # Save catched up parens if no previous bad result occurred
+            [[ -n $MARR_VAR || $QOPT_GFLAG -eq 0 ]]&& \
+                : ${(AP@)MARR_VAR::="$match[@]"}
+        elif [[ $INPUT == °match° ]];then
             RET=0
         else
             RET=1
@@ -91,18 +106,20 @@ zs-filter()
     return RET
 }
 
-if [[ -z $PAT_OR_RUN ]]|| \
+if [[ -z ${PAT_OR_RUN#\!} ]]|| \
     {! checks/zs::verify-check "$PAT_OR_RUN"&&((!$+Opts[--fr]));}
 then
     zswarn Check {data}$PAT_OR_RUN{txt} couldn\'t be found
     return 0
 fi
+
 for QE; do
-        if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR"; then
-            EC+=0
+        if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR";then
+            QECODES+=0
             (($+Opts[-o]))&&builtin print -r -- "$QE"||reply+=("$QE")
         else
-            (($+Opts[-z]))&&EC+=$(($?%10))
+            QRET=$?
+            (($+Opts[-z]))&&QECODES+=$((QRET%10))
             # Meaning: output only when -z
             if (($+Opts[-o]&&$+Opts[-z]));then
                 builtin print
@@ -111,14 +128,15 @@ for QE; do
             fi
         fi
 done
-REPLY=$EC
+REPLY=$QECODES
 
 # At least 1 zero code exists?
-[[ $REPLY != <1-9># ]]&&integer have_output=1
+[[ $REPLY != <1-9># ]]&&QHAVE_OUTPUT=1||QHAVE_OUTPUT=QOPTIONAL
 
 # If run as script, then output status string via stdout
-((have_output&&$+Opts[-o]))&&builtin print -r -- $REPLY
+(((QHAVE_OUTPUT||$+Opts[-z])&&$+Opts[-o]))&&builtin print -r -- $REPLY
 
-return 1-have_output
-
+# Force false result if GFLAG is set
+QRET=QOPT_GFLAG?1:1-QHAVE_OUTPUT
+return QRET
 }

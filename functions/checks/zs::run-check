@@ -24,10 +24,11 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
+integer RET
 
 source $ZSDIR/libexec/zs::std-vars.inc.zsh
-repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;}
-((!$#reply))&&save+=($ErrMap[$CHECK])
+repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;RET=$?;}
+((RET))&&save+=($ErrMap[${CHECK#\!}])
 
 #printf After\ filtering:\ \#$#save\\n
 
