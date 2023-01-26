@@ -1,0 +1,2 @@
+%bThe {opt}-F{txt}%b option is missing from {builtin}zparseopts{txt}%b. It \
+enables verification of options different than the spec given to the builtin.

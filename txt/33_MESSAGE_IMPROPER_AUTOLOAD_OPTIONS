@@ -1,0 +1,1 @@
+%bThe {builtin}autoload{txt}%b builtin isn't called with %B{opt}-U{txt}%b option. It's typically useful because it turns off alias expansion for the body of the function, so that the commands called there don't change suddenly.
