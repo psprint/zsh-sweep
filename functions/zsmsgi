@@ -36,7 +36,7 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- 
 [[ $1 == 0 ]]&&shift
 
 local -U fpath=($0:h:h/functions $fpath)
-autoload -z functions/*[^~](N.,@:t) functions/*/*[^~](N.,@:t2)
+autoload -Uz functions/util/zs::read-msg-theme
 
 util/zs::read-msg-theme
 local -A ZS=("$reply[@]")

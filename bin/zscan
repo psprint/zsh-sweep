@@ -27,10 +27,11 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         v -auto=opts -func=opts -script=opts \
             -src=opts C:=opts||return 7
 
-((!$+Opts[--src]&&!$+Opts[--func]&&!$+Opts[--script]))&& \
-                zswarn No {opt}--func{txt} nor \
-                    {opt}--script{txt} options given, will run both \
-                    script and autoload-function checks on all input files
+((!$+Opts[--src]&&!$+Opts[--func]&&!$+Opts[--script]&&!$+Opts[--auto]))&& \
+                zswarn None of the opts \
+                    {opt}${(j:{txt}, {opt}:):-${=:---func --script \
+                    --src --auto}}{txt} given, will run all-kind checks \
+                    on all input files
 # Process each file
 for QE;do
     print

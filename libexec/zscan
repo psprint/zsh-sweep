@@ -64,14 +64,18 @@ integer RET
 # Support --auto option
 if (($+Opts[--auto]));then
     if [[ $IN == *.plugin.zsh ]];then
-        Opt[--src]=
+        Opts[--src]=
+        zsmsg -h {note}Notice:{%} %bDetected type: {type}sourced script
     elif [[ $IN == *.zsh ]];then
-        Opt[--script]=
+        Opts[--script]=
+        zsmsg -h {note}Notice:{%} %bDetected type: {type}binary script
     fi
     if [[ $WDIR/$IN == */functions/* ]];then
-        Opt[--func]=
+        Opts[--func]=
+        zsmsg -h {note}Notice:{%} %bDetected type: {type}function
     elif [[ $WDIR/$IN == */bin/* ]];then
-        Opt[--script]=
+        Opts[--script]=
+        zsmsg -h {note}Notice:{%} %bDetected type: {type}binary script
     fi
 fi
 # Read checks removing comments
