@@ -35,8 +35,6 @@ fi
 
 # Get work directory path
 local WDIR=$Opts[-C]
-# Also set the user data hash QData
-: ${QData[workdir]::=$WDIR}
 
 if [[ ! -d $WDIR ]];then
     zsmsg -h {err}Error: The path {path}$WDIR{err} \
@@ -48,7 +46,12 @@ util/zs::get-editor||return 1
 : ${QData[editor]::=$REPLY}
 
 local IN=$1 QED=$REPLY Q QE
+if [[ $IN == /* ]];then
+    WDIR=$IN:h
+    IN=$IN:t
+fi
 : ${QData[file-name]::=$IN:t}
+: ${QData[work-dir]::=$WDIR}
 
 if [[ ! -r $WDIR/$IN ]];then
     zsmsg -h {err}Error:{txt} input file \
