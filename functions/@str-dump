@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # -*- mode: sh; sh-indentation: 4; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
 # Copyright (c) 2018 Sebastian Gniazdowski
 #
@@ -29,7 +30,7 @@
 # key: value
 
 @str-dump() {
-    builtin emulate -L zsh extendedglob -o warncreateglobal \
+    builtin emulate -L zsh -o extendedglob -o warncreateglobal \
         -o typesetsilent -o nopromptsubst -o noshortloops
     0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 

@@ -60,7 +60,7 @@ if [[ ! -r $WDIR/$IN ]];then
 fi
 
 util/zs::read-file $WDIR/$IN normal||return 1
-local -a content=("$reply[@]") checks out match_array
+local -a content=("$reply[@]") checks out arr
 local -A ErrMap
 integer RET
 
@@ -107,8 +107,9 @@ for Q ($checks);do
     #
     # Main check exec code
     #
-    repeat 1 {noglob checks/zs::run-check "$QC" content match_array;RET=$?;}
+    repeat 1 {noglob checks/zs::run-check "$QC" content arr;RET=$?;}
     out=($reply)
+    @str-dump arr
     if ((RET));then
         for QE ($out);do
             if ! util/zs::get-txt "$QE";then

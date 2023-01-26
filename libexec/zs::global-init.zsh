@@ -100,7 +100,7 @@ if [[ ! -f $ZSNFO ]]; then
 fi
 
 # Autoload functions
-autoload -z $ZS/functions/(zs:#)*~*'~'(#qN.non:t) \
+autoload -z $ZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
                     $ZS/functions/*/zs:*~*'~'(#qN.non:t2)
 
 # Export a few local var
