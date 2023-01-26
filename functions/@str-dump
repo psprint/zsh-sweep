@@ -1,0 +1,81 @@
+# -*- mode: sh; sh-indentation: 4; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
+# Copyright (c) 2018 Sebastian Gniazdowski
+#
+# @str-dump
+#
+# $1 - name of the variable of which contents should be dumped
+#
+# Dumps the contents of the variable, whether it's being a scalar,
+# an array or a hash. The contents of the hash are sorted on the
+# keys numerically, i.e.: by using `(on)` flags.
+#
+# An option -q can be provided: it'll enable quoting of the printed
+# data with the q-flag (i.e.: backslash quoting).
+#
+# Example:
+# array=( "" "a value" "test" )
+# @str-dump array
+#
+# Output:
+# ''
+# a\ value
+# test
+#
+# typeset -A hash=( "a key" "a value" key value )
+# @str-dump -q hash
+#
+# Output:
+# a\ key: a\ value
+# key: value
+
+@str-dump() {
+    builtin emulate -L zsh extendedglob -o warncreateglobal \
+        -o typesetsilent -o nopromptsubst -o noshortloops
+    0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+    integer idx
+    if [[ $1 = -q ]] {
+        integer quote=1
+        shift
+    } else {
+        integer quote=0
+    }
+
+    if [[ $1 = -- ]] { shift; }
+
+    local __var_name="$1"
+
+    (( ${(P)+__var_name} )) || {
+        print "Error: the parameter \`$__var_name' doesn't exist"
+        return 1
+    }
+    case ${(Pt)__var_name} in
+        (*array*)
+            (( quote )) && \
+                { print -rl -- "${(@qP)__var_name}"; ((1)); } || \
+                print -rl -- "${${(@P)__var_name}//(#s)/$((++idx)): }"
+            ;;
+        (*association*)
+            # The double kv usage is because the behavior
+            # changed in a Zsh version
+            local -a keys
+            local key access_string
+            keys=( "${(@kon)${(@Pk)__var_name}}" )
+            for key in "${keys[@]}"; do
+                access_string="${__var_name}[$key]"
+                (( quote )) && \
+                    { print -r -- "${(q)key}: ${(qP)access_string}"; ((1)); } || \
+                    print -r -- "$key: ${(P)access_string}"
+            done
+            ;;
+        (*)
+            (( quote )) && \
+                { print -r -- "${(qP)__var_name}"; ((1)); } || \
+                print -r -- "${(P)__var_name}"
+            ;;
+    esac
+
+    return 0
+}
+
+# vim:ft=zsh:sw=4:sts=4:et
