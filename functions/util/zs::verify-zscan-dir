@@ -9,12 +9,12 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
-: ${TIG_SUITE_DIR:=$0:h:h} ${Plugins[TIG_DIR]:=$0:h:h}
+: ${ZSDIR:=$0:h:h}
 
-if [[ ! -d $TIG_SUITE_DIR || ! -f $0 || ! -r $0 ]];then
-    tigmsg -h %U{204}Error:%f cannot find/read %B{204}$TINICK%f%b program \
-        directory, wrong or empty {39}\$TIG_SUITE_DIR%f \
-        \(set to: {41}${TIG_SUITE_DIR:-(NULL)}%f\)
+if [[ ! -d $ZSDIR || ! -f $0 || ! -r $0 ]];then
+    tigmsg -h %U{204}Error:%f cannot find/read program \
+        directory of %B{204}$ZSNICK%f%b, wrong or empty \
+        {39}\$ZSDIR%f \(currently set to: {41}${ZSDIR:-(NULL)}%f\)
     return 1
 fi
 

@@ -22,14 +22,20 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 local -A Opts
 local -a opts
 local QE
-builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- v -func=opts -script=opts C:=opts||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
+        -D -E -A Opts -- \
+        v -auto=opts -func=opts -script=opts \
+            -src=opts C:=opts||return 7
 
-((!$+Opts[--func]&&!$+Opts[--script]))&&zswarn No {opt}--func{txt} nor \
+((!$+Opts[--src]&&!$+Opts[--func]&&!$+Opts[--script]))&& \
+                zswarn No {opt}--func{txt} nor \
                     {opt}--script{txt} options given, will run both \
                     script and autoload-function checks on all input files
+# Process each file
 for QE;do
     print
-    zsmsg -h {err}Notice: scanning file: {quot}•{warn}${(U)QE}{quot}•{txt}…
+    zsmsg -h {err}Notice:{%} scanning file: {quot}•{warn}${(U)QE}{quot}•{%}…
+    (($+Opts[-C]))&&zsmsg -h {err}Notice:{%} work dir set to: {path}$Opts[-C]
     print
     $ZSDIR/libexec/zscan $opts $QE
 done

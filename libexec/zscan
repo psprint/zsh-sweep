@@ -20,7 +20,9 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 # -# offset of the picked °feature° when multiple match
 # -l show files in the °feature°
 local -A Opts QData
-builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- v -func -script C:||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
+        -D -E -A Opts -- \
+        v -auto -func -script -src C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'
@@ -54,24 +56,39 @@ if [[ ! -r $WDIR/$IN ]];then
     return 1
 fi
 
-util/zs::read-file $IN normal||return 1
+util/zs::read-file $WDIR/$IN normal||return 1
 local -a content=("$reply[@]") checks out match_array
 local -A ErrMap
 integer RET
 
+# Support --auto option
+if (($+Opts[--auto]));then
+    if [[ $IN == *.plugin.zsh ]];then
+        Opt[--src]=
+    elif [[ $IN == *.zsh ]];then
+        Opt[--script]=
+    fi
+    if [[ $WDIR/$IN == */functions/* ]];then
+        Opt[--func]=
+    elif [[ $WDIR/$IN == */bin/* ]];then
+        Opt[--script]=
+    fi
+fi
 # Read checks removing comments
-checks=(${=${"$(<$ZSDIR/checks.dat)"//\#[^#]##($'\n'|(#e))}})
+checks=(${(f)"$(<$ZSDIR/checks.dat)"})
 eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
-(($+Opts[--func]))&&checks=(${checks:#script:*})
-(($+Opts[--script]))&&checks=(${checks:#func:*})
+(($+Opts[--func]))&&checks=(${checks:#(script,#|src,#)#:*})
+(($+Opts[--script]))&&checks=(${checks:#(func,#|src,#)#:*})
+(($+Opts[--src]))&&checks=(${checks:#(func,#|script,#)#:*})
 
 for Q ($checks);do
-    local QC=${Q#(script|func):}
-    local QT=both
-    [[ $Q == script:* ]]&&QT=script\ 
-    [[ $Q == func:* ]]&&QT=function\ 
+    local QC=${Q##((script,#|func,#|src,#)##):}
+    local QT=
+    [[ $Q == *script*:* ]]&&QT=script
+    [[ $Q == *func*:* ]]&&QT+=${QT:+,}func
+    [[ $Q == *src*:* ]]&&QT+=${QT:+,}sourced\ file
 
-    zsmsg -h {note}Notice:%b running {type}${QT:#both}{note}check: \
+    zsmsg -h {note}Notice:%b running {type}${QT}${QT:+ }{note}check: \
         {chk}${QC#\!}{warn}%b…
 
     # Check is loaded properly?
