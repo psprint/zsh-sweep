@@ -7,7 +7,7 @@
 
 # Set the base and typically useful options
 builtin emulate -L zsh
-builtin setopt extendedglob warncreateglobal typesetsilent \
+builtin setopt localoptions extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd nopromptsubst
 
 export ZSNICK=${ZSNICK:-ZshScan}

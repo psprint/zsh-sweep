@@ -20,7 +20,7 @@ cmd     %B208
 func    %B41
 opt     41
 url     27
-txt     27
+txt     %f%b
 quot    %B220
 ver     %B27
 note    %B76
