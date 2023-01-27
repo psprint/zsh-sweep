@@ -6,5 +6,7 @@ local \
     qnl=$'\n' \
     qinc=/ \
     qnoalnum='[^[:alnum:]]##' \
-    qnooalnum='[^[:alnum:]]#'
-
+    qnooalnum='[^[:alnum:]]#' \
+    qstr='(#B)(["]([^"]#)["]|['']([^'']#)['']|([^[:space:]]##))' \
+    qostr='(#B)(["]([^"]#)["]|['']([^'']#)['']|([^[:space:]]#))'
+ 

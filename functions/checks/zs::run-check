@@ -30,7 +30,8 @@ source $ZSDIR/libexec/zs::std-vars.inc.zsh
 repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;RET=$?;}
 ((RET))&&save+=($ErrMap[${CHECK#\!}])
 
-#printf After\ filtering:\ \#$#save\\n
+print -Pl %F{33}Content\ after\ °%Bzsfilt%b°:%f $reply %K{220}END%k \
+    #——\$arr——: $arr
 
 reply=($save)
 return $#reply

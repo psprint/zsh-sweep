@@ -59,11 +59,29 @@ fi
 # Initialize vars
 REPLY= reply=()
 local QE QECODES O
-integer QRET QOPT_GFLAG QHAVE_OUTPUT QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1}
+integer QRET QOPT_GFLAG QHAVE_OUTPUT \
+    QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1}
 local PAT_OR_RUN=${PAT_OR_RUN#\!}
+
 # Get the transported text from global alias
-local QUNWIND=${galiases[$PAT_OR_RUN]##(!|)<->##:} \
-        QCONDITON=${(M)galiases[$PAT_OR_RUN]##(!|)<->##}
+local QALIAS=$galiases[$PAT_OR_RUN] \
+        QPAT='(#B)([<](#b)([^>]#)[>])(#c0,1)' # pattern for <*>
+local QUNWIND QCONDITION
+
+# The command to take on match
+[[ $QALIAS == (\!|)$~QPAT* ]]&&QCMD=$match[1]
+# A more basic action – test if given #no parenthesis is/isn't empty
+[[ $QALIAS == (\!|)$~QPAT$~QPAT* ]]&&QCONDITION=$match[2]
+# Unwinded pattern took from global alias transport
+[[ $QALIAS == (\!|)($~QPAT)#:(#b)(*) ]]&&QUNWIND=$match[2]
+ 
+zs-save() {
+    local QCMD=$1 VAR_NAME=$2 VAL=$3
+    ((!QCMD||!$#VAR_NAME||!$#VAL))&&return 1
+    VAR_NAME=${VAR_NAME}\[${(P)#VAR_NAME}+1\]
+    [[ ${QCMD::=${QCMD#save:}} == <-> ]]&&\
+        : ${(P)VAR_NAME::="$VAL"}
+}
 
 zs-filter()
 {
@@ -77,30 +95,33 @@ zs-filter()
         # Prepare match vars
         match=() mbegin=() mend=()
         eval "INPUT=\${(S)INPUT//#%(#b)(#i)($QUNWIND)/°match°}"
-        if [[ $INPUT == °match° && -n $QCONDITON ]];then
-            if [[ $QCONDITON == \!* ]];then
-                [[ -z $match[${QCONDITON#\!}] ]]
+        if [[ $INPUT == °match° && -n $QCONDITION ]];then
+            if [[ $QCONDITION == \!* ]];then
+                [[ -z $match[${QCONDITION#\!}] ]]
                 RET=$?
            else
-                [[ -n $match[$QCONDITON] ]]
+                [[ -n $match[$QCONDITION] ]]
                 RET=$?
            fi
             # Optional matching makes sense only for …:QCON:… condition,
             # so set the QOPT_FLAG only in this if-branch.
             # QOPT_GFLAG equal to 1 means: the pattern matched, but
-            # QCONDITON didn't hold, so return false even if there has
+            # QCONDITION didn't hold, so return false even if there has
             # been °match° in the string. It's basically a second-stage
-            # check – the QCONDITON must hold here
+            # check – the QCONDITION must hold here
             QOPT_GFLAG+=RET
-            # Save the matched line regardless of the QCONDITON result
+            # Save the matched line regardless of the QCONDITION result
             RET=0
-            # Save catched up parens if no previous bad result occurred
-            [[ -n $MARR_VAR || $QOPT_GFLAG -eq 0 ]]&& \
-                : ${(AP@)MARR_VAR::="$match[@]"}
         elif [[ $INPUT == °match° ]];then
             RET=0
         else
             RET=1
+        fi
+        # Any command passed in <…>?
+        if ((!RET&&$#QCMD));then
+            #print local VAR_NAME=${MARR_VAR}\[${(P)#MARR_VAR}+1\]
+            #print $VAR_NAME
+            zs-save "$QCMD" "$MARR_VAR" "${match[${QCMD#save:}]}"
         fi
     fi
     return RET
