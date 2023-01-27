@@ -22,8 +22,8 @@ typeset -gA Plugins
 source "$0:h:h"/libexec/zs::global-init.zsh
 
 # Cleanup on exit
-trap "unset -f zs-filter ZSIO" EXIT
-trap "unset -f zs-filter ZSIO;return 1" INT
+trap "unset -f zs-filter zs-save ZSIO" EXIT
+trap "unset -f zs-filter zs-save ZSIO;return 1" INT
 
 # Input/options
 local -A Opts
@@ -59,13 +59,13 @@ fi
 # Initialize vars
 REPLY= reply=()
 local QE QECODES O
-integer QRET QOPT_GFLAG QHAVE_OUTPUT \
-    QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1}
+integer QRET QOPT_GFLAG QFLAG_SEEN QHAVE_OUTPUT \
+    QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1} QIDX
 local PAT_OR_RUN=${PAT_OR_RUN#\!}
 
 # Get the transported text from global alias
-local QALIAS=${galiases[$PAT_OR_RUN]##-[a-z]:} \
-        QPAT='(#B)([<](#b)([^>]#)[>])(#c0,1)' # pattern for <*>
+local QALIAS=${galiases[$PAT_OR_RUN]#-[a-z]:} \
+        QPAT='(#B)([<](#b)([^>]#)[>]|)' # pattern for <*>
 local QUNWIND QCONDITION QCMD
 
 # The command to take on match
@@ -78,11 +78,10 @@ local QUNWIND QCONDITION QCMD
 #printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
 zs-save() {
     local QCMD=${1#save:} VAR_NAME=$2 VAL=$3
-    [[ $1 != save:* ]]&&return 1
+    [[ $1 != save:<-> || $QCMD != <-> ]]&&return 1
     ((!$#QCMD||!$#VAR_NAME||!$#VAL))&&return 1
     VAR_NAME=${VAR_NAME}\[${(P)#VAR_NAME}+1\]
-    [[ ${QCMD::=${QCMD#save:}} == <-> ]]&&\
-        : ${(P)VAR_NAME::="$VAL"}
+    : ${(P)VAR_NAME::="$VAL"}
     zsmsg $ndbg -h DBG: saved $VAL
 }
 
@@ -138,8 +137,9 @@ then
 fi
 
 for QE; do
+        QIDX+=1
         if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR";then
-            QECODES+=0
+            QECODES+=0 QRET=0
             (($+Opts[-o]))&&builtin print -r -- "$QE"||reply+=("$QE")
         else
             QRET=$?
@@ -150,6 +150,11 @@ for QE; do
             elif (($+Opts[-z]));then
                 reply+=("")
             fi
+        fi
+        if ((QFLAG_SEEN!=QOPT_GFLAG));then
+            QFLAG_SEEN=QOPT_GFLAG
+            zserr -h %bError at line {num}\#$QIDX{txt}%b ↔\
+                 {code}${QE//$~qsp/ }{txt}%b:
         fi
 done
 REPLY=$QECODES

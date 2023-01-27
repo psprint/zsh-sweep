@@ -2,14 +2,14 @@
 tag     135
 nick    27
 err     %B203
-warn    %B208
+warn    %B204
 builtin %B179
 code    %B135
 nick    %B179
 chk     %B105
 type    %B174
 data    %B70
-num     %B135
+num     %B41
 file    %B41
 dir     %B39
 path    %B135
