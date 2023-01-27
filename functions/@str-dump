@@ -34,6 +34,8 @@
         -o typesetsilent -o nopromptsubst -o noshortloops
     0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
+    local MATCH; integer MBEGIN MEND
+
     integer idx
     if [[ $1 = -q ]] {
         integer quote=1
@@ -53,8 +55,9 @@
     case ${(Pt)__var_name} in
         (*array*)
             (( quote )) && \
-                { print -rl -- "${(@qP)__var_name}"; ((1)); } || \
-                print -rl -- "${${(@P)__var_name}//(#s)/$((++idx)): }"
+                { print -rl -- "${(@)${(@AP)__var_name}//(#m)*/$((++idx)): ${(q)MATCH}}"; ((1)); } || \
+                print -rl -- \
+                  "${(@)${(@AP)__var_name}//(#m)((#s))/$((++idx)): }"
             ;;
         (*association*)
             # The double kv usage is because the behavior
