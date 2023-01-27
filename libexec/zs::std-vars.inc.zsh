@@ -1,3 +1,4 @@
+setopt rcquotes
 local \
     qocb='{' qccb='}' \
     qsp='[[:space:]]##' \

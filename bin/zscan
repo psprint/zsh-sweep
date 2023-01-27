@@ -25,7 +25,7 @@ local QE
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
         v -auto=opts -func=opts -script=opts \
-            -src=opts C:=opts||return 7
+            -src=opts -dbg=opts C:=opts||return 7
 
 ((!$+Opts[--src]&&!$+Opts[--func]&&!$+Opts[--script]&&!$+Opts[--auto]))&& \
                 zswarn None of the opts \

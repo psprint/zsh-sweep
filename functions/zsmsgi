@@ -22,6 +22,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+: ${ZSDIR:=$0:h:h}
 
 # -h - origin tag
 # -p - overwrite quiet mode
@@ -32,10 +33,9 @@ local -A Opts
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- h p q e n || return 7
 
 # Quiet mode? → no printing if so
-[[ ($+Opts[-q] == 1 || $1 == 1) && $+Opts[-p] != 1 ]]&&return
-[[ $1 == 0 ]]&&shift
-
-local -U fpath=($0:h:h/functions $fpath)
+[[ ($+Opts[-q] == 1 || $2 == 1) && $+Opts[-p] != 1 ]]&&return
+[[ $2 == 0 ]]&&set -- "$@[1]" "$@[3,-1]"
+local -U fpath=($ZSDIR/functions $fpath)
 autoload -Uz functions/util/zs::read-msg-theme
 
 util/zs::read-msg-theme

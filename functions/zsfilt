@@ -12,7 +12,7 @@ integer bescript=${${0:#zsfilt}:+1}
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
                         -o warncreateglobal -o typesetsilent \
-                        -o nopromptsubst
+                        -o nopromptsubst -o rcquotes
 
 # Set $0 with a new trik - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
@@ -75,17 +75,20 @@ local QUNWIND QCONDITION
 # Unwinded pattern took from global alias transport
 [[ $QALIAS == (\!|)($~QPAT)#:(#b)(*) ]]&&QUNWIND=$match[2]
  
+#printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
 zs-save() {
-    local QCMD=$1 VAR_NAME=$2 VAL=$3
-    ((!QCMD||!$#VAR_NAME||!$#VAL))&&return 1
+    local QCMD=${1#save:} VAR_NAME=$2 VAL=$3
+    [[ $1 != save:* ]]&&return 1
+    ((!$#QCMD||!$#VAR_NAME||!$#VAL))&&return 1
     VAR_NAME=${VAR_NAME}\[${(P)#VAR_NAME}+1\]
     [[ ${QCMD::=${QCMD#save:}} == <-> ]]&&\
         : ${(P)VAR_NAME::="$VAL"}
+    zsmsg $ndbg -h DBG: saved $VAL
 }
 
 zs-filter()
 {
-    local QT=$1 PAT_OR_RUN=$2 INPUT=$3 MARR_VAR=$4
+    local l QT=$1 PAT_OR_RUN=$2 INPUT=$3 MARR_VAR=$4
     local -a match=() mbegin=() mend=()
     integer RET
     if [[ $QT == 1 ]];then

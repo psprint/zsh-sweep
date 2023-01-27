@@ -22,13 +22,16 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 local -A Opts QData
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
-        v -auto -func -script -src C:||return 7
+        -dbg v -auto -func -script -src C:||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
     local nl=$'\n'
     tigmsg %B{33}zscan%b -vGghl\# %B{41}\<°feature-ID°\>$nl\
     return 0
 fi
+
+# Easy access var
+integer ndbg=1-$+Opts[--dbg]
 
 # Automatic -C value
 : ${Opts[-C]:=$PWD}
@@ -60,7 +63,7 @@ if [[ ! -r $WDIR/$IN ]];then
 fi
 
 util/zs::read-file $WDIR/$IN normal||return 1
-local -a content=("$reply[@]") checks out arr
+local -a content=("$reply[@]") checks out qarr qkeep
 local -A ErrMap
 integer RET
 
@@ -107,9 +110,8 @@ for Q ($checks);do
     #
     # Main check exec code
     #
-    repeat 1 {noglob checks/zs::run-check "$QC" content arr;RET=$?;}
+    repeat 1 {noglob checks/zs::run-check "$QC" content qarr;RET=$?;}
     out=($reply)
-    @str-dump arr
     if ((RET));then
         for QE ($out);do
             if ! util/zs::get-txt "$QE";then
