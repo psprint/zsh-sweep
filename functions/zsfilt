@@ -64,16 +64,16 @@ integer QRET QOPT_GFLAG QHAVE_OUTPUT \
 local PAT_OR_RUN=${PAT_OR_RUN#\!}
 
 # Get the transported text from global alias
-local QALIAS=$galiases[$PAT_OR_RUN] \
+local QALIAS=${galiases[$PAT_OR_RUN]##-[a-z]:} \
         QPAT='(#B)([<](#b)([^>]#)[>])(#c0,1)' # pattern for <*>
-local QUNWIND QCONDITION
+local QUNWIND QCONDITION QCMD
 
 # The command to take on match
-[[ $QALIAS == (\!|)$~QPAT* ]]&&QCMD=$match[1]
+[[ $QALIAS == $~QPAT* ]]&&QCMD=$match[1]
 # A more basic action – test if given #no parenthesis is/isn't empty
-[[ $QALIAS == (\!|)$~QPAT$~QPAT* ]]&&QCONDITION=$match[2]
+[[ $QALIAS == $~QPAT$~QPAT* ]]&&QCONDITION=$match[2]
 # Unwinded pattern took from global alias transport
-[[ $QALIAS == (\!|)($~QPAT)#:(#b)(*) ]]&&QUNWIND=$match[2]
+[[ $QALIAS == (($~QPAT)##:|)(#b)(*) ]]&&QUNWIND=$match[2]
  
 #printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
 zs-save() {
