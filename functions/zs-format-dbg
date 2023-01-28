@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+# zsqb – zs…quote…braces
+#
+
+zs-format-dbg() {
+
+# Run as script?
+[[ $0 != zsqb ]]&&integer bescript=1
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst -o rcquotes
+
+# Set $0 with a new trik - use of %x prompt expansion
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+# Parse -o, -l options
+local -A Opts
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
+                -D -E -A Opts -- o l||return 7
+
+# Mute warncreateglobal warning
+typeset -g REPLY
+
+# Should join with new lines?
+(($+Opts[-l]))&&local IFS=$'\n'
+local INPUT=$*
+
+# Should output anything?
+((ZSDBG))&&REPLY=$INPUT||REPLY=
+
+# Stdout requested?
+(($+Opts[-o]))&&print -r -- $REPLY
+}

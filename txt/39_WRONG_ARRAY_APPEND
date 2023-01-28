@@ -1,0 +1,1 @@
+%bIncorrect array append, it should say: {code}arr+=(elem){txt}%b not: {code}arr+=elem{txt}%, which doesn't work on various occassions.
