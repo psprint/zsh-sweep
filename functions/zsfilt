@@ -153,7 +153,7 @@ for QE; do
         fi
         if ((QFLAG_SEEN!=QOPT_GFLAG));then
             QFLAG_SEEN=QOPT_GFLAG
-            zserr -h %bError at line {num}\#$QIDX{txt}%b ↔\
+            zserr -h %bError near line {num}\#$QIDX{txt}%b ↔\
                  {code}${QE//$~qsp/ }{txt}%b:
         fi
 done
