@@ -24,8 +24,33 @@ local -a opts
 local QE
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
-        v -auto=opts -func=opts -script=opts \
+        v h=opts -help=opts -auto=opts -func=opts -script=opts \
             -src=opts -dbg=opts C:=opts||return 7
+
+if (($+Opts[-h]||$+Opts[--help]));then
+    zsmsg {pre}%BUsage:{%} zsweep \
+            [{opt}--help{%}/{opt}-h{%}] \
+            [{opt}-C{dir}%b work-dir{%}] \
+            [{opt}--auto{%}] [{opt}--func{%}]{nl} \
+            "               " [{opt}--script{%}] [{opt}--src{%}] \
+            [{opt}--dbg{%}]{nl}
+    zsmsg  \
+            {opt}--help{%}/{opt}-h{%} ${(l:6:):-}\
+                            – this message\
+            {nl}{opt}%b-C{dir}%b work-dir{%} ${(l:4:):-} –\
+                        like {opt}%b-C{%} in {nick}Git{%} – first cd to a dir\
+            {nl}{opt}%b--auto{%} ${(l:9:):-} –\
+                        guess type of {nick}Zsh{%} file\
+            {nl}{opt}%b--func{%} ${(l:9:):-} –\
+                    set input file type to {type}function\
+            {nl}{opt}%b--script{%} ${(l:7:):-} –\
+                    set input file type to {type}binary-script \
+            {nl}{opt}%b--src{%} ${(l:10:):-} –\
+                    set input file type to {type}sourced-script \
+            {nl}{opt}%b--dbg{%} ${(l:10:):-} –\
+                    enable debug messages
+    return 0
+fi
 
 ((!$+Opts[--src]&&!$+Opts[--func]&&!$+Opts[--script]&&!$+Opts[--auto]))&& \
                 zswarn None of the opts \
