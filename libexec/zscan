@@ -57,7 +57,8 @@ if [[ ! -r $WDIR/$IN ]];then
 fi
 
 util/zs::read-file $WDIR/$IN normal||return 1
-local -a content=("$reply[@]") checks out qarr qkeep
+local -a content=("$reply[@]") checks out qarr
+local -aU qkeep
 local -A ErrMap
 integer RET
 

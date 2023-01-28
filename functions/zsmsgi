@@ -37,6 +37,7 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- 
 [[ $2 == 0 ]]&&set -- "$@[1]" "$@[3,-1]"
 local -Ua fpath=($ZSDIR/functions $fpath)
 local -a reply
+local TMP
 
 autoload -z util/zs::setup-aliases util/zs::read-msg-theme
 
@@ -92,13 +93,20 @@ ${${match[1]//(#s)([\\][\\])#(#e)/$tmp}//(#s)(#m)[\\]##(#e)/$tmpb}$match[3]}"
     return 0
 }
 
+# Isolate any quoted parts (with {code}…{/code})
+REPLY=${@[*]//(#b)(\{code\}*\{\/code\})/%%CODE%%}
+TMP=${ZS[code]//(#m)<->/%F\{$MATCH\}}\
+${match[1]//((#s)\{code\}|\{\/code\}(#e))}\
+$ZS[%]
 # Substitute foreground {color}
-zsmsg_subst '{' '}' "$@"
+zsmsg_subst '{' '}' "$REPLY"
 # Substitute background «color»
 zsmsg_subst '«' '»' "$REPLY"
 
 # Substitute $HOME
-REPLY="${REPLY//$HOME/~}"
+REPLY=${REPLY//$HOME/~}
+# Restore quoted code
+REPLY=${REPLY//\%\%CODE\%\%/$TMP}
 
 # Output
 #printf %s\\n
