@@ -1,2 +1,3 @@
-# zsh-scan
-setopt noglobdots
+# :sponge: zsh-sweep
+
+
