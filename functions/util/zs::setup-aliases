@@ -20,7 +20,7 @@ local -A Opts
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- -c || return 1
 
 if [[ ! -d $ZSAES ]];then
-    zsmsg {err}Error:{txt} alias dir not set ({data}\$ZSAES{txt})
+    print 'ZshSweep:' error: alias dir not set (\$ZSAES)
     return 1
 fi
 
