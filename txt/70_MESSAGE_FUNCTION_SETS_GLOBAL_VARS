@@ -1,0 +1,1 @@
+%bA global variable has been created without declaration, by assignment. Add a line like {data}local VAR{%} or {data}typeset -g VAR{%} so that the variable is defined before use.
