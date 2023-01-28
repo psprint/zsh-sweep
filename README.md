@@ -12,6 +12,9 @@ Usage: zsweep [--help/-h] [-C work-dir] [--auto] [--func]
 --src            – set input file type to sourced-script 
 --dbg            – enable debug messages
 ```
+## Screenshots
+
+![screenshot](https://raw.githubusercontent.com/psprint/zsh-sweep/master/img/screenshot.png)
 
 ## Instalation
 
