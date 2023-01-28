@@ -17,7 +17,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 local -A Opts
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- -e: || return 1
 
-util/zs::verify-zscan-dir||return 1
+util/zs::verify-zsweep-dir||return 1
 
 local qed1=${${${Opts[-e]:-$EDITOR}:-$VISUAL}:-mcedit}
 local qed=$qed1

@@ -10,7 +10,7 @@ builtin emulate -L zsh
 builtin setopt localoptions extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd nopromptsubst rcquotes
 
-export ZSNICK=${ZSNICK:-ZshScan}
+export ZSNICK=${ZSNICK:-ZSweep}
 typeset -g -a reply match mbegin mend
 typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
 
@@ -79,7 +79,7 @@ export ZSCONFIG ZSNFO ZSCACHE ZSLOG ZSNL ZSTXT
 
  # Right customizable ~/.config/… and ~/.cache/… file paths
 : ${ZSCONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/${(L)ZSNICK}}
-: ${ZSNFO:=$ZSCONFIG/zscan.conf}
+: ${ZSNFO:=$ZSCONFIG/zsweep.conf}
 : ${ZSCACHE:=${${XDG_CACHE_HOME:+$XDG_CACHE_HOME/${(L)ZSNICK}}:-$HOME/.cache/${(L)ZSNICK}}}
 : ${ZSLOG:=$ZSCACHE/${(L)ZSNICK}.log}
 : ${ZSNL:=$ZSLOG}
@@ -105,7 +105,7 @@ autoload -z $ZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
 
 # Export a few local var
 util/zs::setup-aliases||return 1
-util/zs::verify-zscan-dir||return 1
+util/zs::verify-zsweep-dir||return 1
 util/zs::get-prj-dir||return 1
 local -x PDIR=$REPLY PID=$REPLY:t:r
 

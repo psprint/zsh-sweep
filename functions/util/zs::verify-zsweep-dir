@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-util/zs::verify-zscan-dir() {
+util/zs::verify-zsweep-dir() {
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \

@@ -2,7 +2,7 @@
 # Copyright (c) 2023 Sebastian Gniazdowski
 
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
-[[ $0 != zscan || -n $ZSH_SCRIPT ]]&&integer bescript=1
+[[ $0 != zsweep || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
@@ -23,12 +23,6 @@ local -A Opts QData
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
         -dbg v -auto -func -script -src C:||return 7
-
-if (($+Opts[-h]||$+Opts[--help]));then
-    local nl=$'\n'
-    tigmsg %B{33}zscan%b -vGghl\# %B{41}\<°feature-ID°\>$nl\
-    return 0
-fi
 
 # Easy access var
 integer ndbg=1-$+Opts[--dbg]

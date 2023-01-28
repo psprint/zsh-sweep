@@ -5,7 +5,7 @@
 #
 
 # Run as script?
-[[ $0 != zscan ]]&&integer bescript=1
+[[ $0 != zsweep ]]&&integer bescript=1
 
 # Set options
 builtin emulate -L zsh -o extendedglob -o noshortloops \
