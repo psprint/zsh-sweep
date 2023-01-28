@@ -92,7 +92,7 @@ for Q ($checks);do
     [[ $Q == *func*:* ]]&&QT+=${QT:+,}func
     [[ $Q == *src*:* ]]&&QT+=${QT:+,}sourced\ file
 
-    zsmsg -h {note}Notice:{%} running {type}${QT}${QT:+ }{%}check: \
+    zsmsg {note}Notice:{%} running {type}${QT}${QT:+ }{%}check: \
         {chk}${QC#\!}{warn}%b…
 
     # Check is loaded properly?
