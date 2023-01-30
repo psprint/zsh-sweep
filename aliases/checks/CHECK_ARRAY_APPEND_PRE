@@ -1,1 +1,1 @@
--g:<save:2><2>:$~qosp(#B)(local|typeset|declare)$~qsp(-[a-zA-Z]#a[a-zA-Z]#)$~qsp(#b)((#B)([[:IDENT:]]##([=]$~qostr|)$~qosp)##)
+-g:<save:2><2>:$~qosp(#B)(local|typeset|declare)$~qsp(-[a-zA-Z0-9]#a[a-zA-Z0-9]#)$~qsp(#b)((#B)([[:IDENT:]]##([=]$~qostr|)$~qosp)##)
