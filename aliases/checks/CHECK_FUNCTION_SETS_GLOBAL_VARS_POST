@@ -1,1 +1,1 @@
--g:<><!2>:(#B)${${(@A)qkeep::=${=:-${=${${(z)qarr[@]}\/=*}} 0 REPLY reply}}+}(#b)((#B)[[:space:]]#(([[:IDENT:]]##)~(${(~j:|:)qkeep}))=*)
+-g:<><!2>:(#B)${${(@A)qkeep::=${=:-${=${${(z)qarr[@]}\/=*}} 0 1 2 3 4 5 6 7 8 9 path PATH fpath FPATH REPLY reply}}+}(#b)((#B)[[:space:]]#(([[:IDENT:]]##)~(${(~j:|:)qkeep}))=*)
