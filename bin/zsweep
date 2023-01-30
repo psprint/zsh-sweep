@@ -22,6 +22,8 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 local -A Opts
 local -a opts
 local QE
+integer QRET
+
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
         v h=opts -help=opts -auto=opts -func=opts -script=opts \
@@ -64,4 +66,8 @@ for QE;do
     (($+Opts[-C]))&&zsmsg -h {err}Notice:{%} work dir set to: {path}$Opts[-C]
     print
     $ZSDIR/libexec/zscan $opts $QE
+    QRET+=$?
 done
+
+return QRET
+

@@ -1,1 +1,0 @@
--g:(#b)(#i)*(local[_]#options|emulate$~qsp-L)*~^*$~qsp(typeset[_]#silent)*~^*(warn[_]#create[_]#global)*~^*(no[_]#short[_]#loops)*~^*(no[_]#prompt[_]#subst)*

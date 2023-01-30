@@ -60,7 +60,7 @@ util/zs::read-file $WDIR/$IN normal||return 1
 local -a content=("$reply[@]") checks out qarr
 local -aU qkeep
 local -A ErrMap
-integer RET
+integer RET QRET
 
 # Support --auto option
 if (($+Opts[--auto]));then
@@ -107,6 +107,7 @@ for Q ($checks);do
     #
     repeat 1 {noglob checks/zs::run-check "$QC" content qarr;RET=$?;}
     out=($reply)
+    QRET+=RET
     if ((RET));then
         for QE ($out);do
             if ! util/zs::get-txt "$QE";then
@@ -119,3 +120,5 @@ for Q ($checks);do
         done
     fi
 done
+
+return QRET
