@@ -76,6 +76,14 @@ local QUNWIND QCONDITION QCMD
 [[ $QALIAS == (($~QPAT)##:|)(#b)(*) ]]&&QUNWIND=$match[2]
  
 #printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
+zs-code() {
+    local QCMD=$1
+    reply=()
+    eval $QUNWIND
+    [[ $QCMD == \!* ]]&&QOPT_GFLAG+=!!$#reply
+    [[ $QCMD == [^\!]* ]]&&QOPT_GFLAG+=!$#reply
+    qreply+=($reply)
+}
 zs-save() {
     local QCMD=${1#save:} VAR_NAME=$2 VAL=$3
     # Strip trailing space
@@ -88,7 +96,7 @@ zs-save() {
     VAR_NAME=${VAR_NAME}\[${(P)#VAR_NAME}+1\]
     # Assign via (P)
     : ${(P)VAR_NAME::="$VAL"}
-    zsmsg $ndbg -h DBG: saved $VAL
+    zsmsg $ndbg -h -- DBG: saved $VAL
 }
 
 zs-filter()
@@ -102,28 +110,33 @@ zs-filter()
     else
         # Prepare match vars
         match=() mbegin=() mend=()
-        eval "INPUT=\${(S)INPUT//(#s)($QUNWIND)(#e)/°match°}"
-        if [[ $INPUT == °match° && -n $QCONDITION ]];then
-            if [[ $QCONDITION == \!* ]];then
-                [[ -z $match[${QCONDITION#\!}] ]]
-                RET=$?
-           else
-                [[ -n $match[$QCONDITION] ]]
-                RET=$?
-           fi
-            # Optional matching makes sense only for …:QCON:… condition,
-            # so set the QOPT_FLAG only in this if-branch.
-            # QOPT_GFLAG equal to 1 means: the pattern matched, but
-            # QCONDITION didn't hold, so return false even if there has
-            # been °match° in the string. It's basically a second-stage
-            # check – the QCONDITION must hold here
-            QOPT_GFLAG+=RET
-            # Save the matched line regardless of the QCONDITION result
-            RET=0
-        elif [[ $INPUT == °match° ]];then
-            RET=0
+        #print eval "INPUT=\${(S)INPUT//(#s)($QUNWIND)(#e)/°match°}"
+        if [[ $QCMD == (\!|)code ]];then
+            zs-code $QCMD
         else
-            RET=1
+            eval "INPUT=\${(S)INPUT//(#s)($QUNWIND)(#e)/°match°}"
+            if [[ $INPUT == °match° && -n $QCONDITION ]];then
+                if [[ $QCONDITION == \!* ]];then
+                    [[ -z $match[${QCONDITION#\!}] ]]
+                    RET=$?
+               else
+                    [[ -n $match[$QCONDITION] ]]
+                    RET=$?
+               fi
+                # Optional matching makes sense only for …:QCON:… condition,
+                # so set the QOPT_FLAG only in this if-branch.
+                # QOPT_GFLAG equal to 1 means: the pattern matched, but
+                # QCONDITION didn't hold, so return false even if there has
+                # been °match° in the string. It's basically a second-stage
+                # check – the QCONDITION must hold here
+                QOPT_GFLAG+=RET
+                # Save the matched line regardless of the QCONDITION result
+                RET=0
+            elif [[ $INPUT == °match° ]];then
+                RET=0
+            else
+                RET=1
+            fi
         fi
         # Any command passed in <…>?
         if ((!RET&&$#QCMD));then

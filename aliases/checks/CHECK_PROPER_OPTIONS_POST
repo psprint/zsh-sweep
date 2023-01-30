@@ -1,1 +1,1 @@
--g:<save:1><>:(#b)(#i)(*)
+-g:<!code><>:: ${${(@A)qkeep::=${=:-${=${${(z)qarr[@]}\/(-o)}}}}+}; : ${${(@A)qarr::=$(<$ZSDIR\/data\/14_recommended_options)}+};reply=(${qarr:|qkeep})

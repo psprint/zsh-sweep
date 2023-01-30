@@ -11,7 +11,7 @@ builtin setopt localoptions extendedglob warncreateglobal typesetsilent \
                 noshortloops noautopushd nopromptsubst rcquotes
 
 export ZSNICK=${ZSNICK:-ZSweep}
-typeset -g -a reply match mbegin mend
+typeset -g -a reply match mbegin mend qreply
 typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
 
 # Plugins hash

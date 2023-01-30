@@ -35,6 +35,7 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- 
 # Quiet mode? → no printing if so
 [[ ($+Opts[-q] == 1 || $2 == 1) && $+Opts[-p] != 1 ]]&&return
 [[ $2 == 0 ]]&&set -- "$@[1]" "$@[3,-1]"
+set -- ${@:#--}
 local -Ua fpath=($ZSDIR/functions $fpath)
 local -a reply
 local TMP
