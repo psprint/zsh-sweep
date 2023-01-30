@@ -102,7 +102,7 @@ zs-filter()
     else
         # Prepare match vars
         match=() mbegin=() mend=()
-        eval "INPUT=\${(S)INPUT//#%(#b)(#i)($QUNWIND)/°match°}"
+        eval "INPUT=\${(S)INPUT//(#s)($QUNWIND)(#e)/°match°}"
         if [[ $INPUT == °match° && -n $QCONDITION ]];then
             if [[ $QCONDITION == \!* ]];then
                 [[ -z $match[${QCONDITION#\!}] ]]
