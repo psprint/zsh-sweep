@@ -1,0 +1,47 @@
+#
+# Language: Zsh
+#
+
+--langdef=zsh3
+--langmap=zsh3:.zsh.sh.bash
+
+#
+# 1. Detect variables
+# 2. … and function names.
+#
+
+--kinddef-zsh3=v,var,variables
+--kinddef-zsh3=f,fun,functions
+
+--_tabledef-zsh3=main
+--_tabledef-zsh3=vardef
+--_tabledef-zsh3=comment
+--_tabledef-zsh3=equal
+
+# Feature: Zsh variable detection
+--_mtable-regex-zsh3=main/^\s*(local|typeset|declare|integer|float|readonly)\s+(-\w+\s+)*///{tenter=vardef}
+# Feature: Zsh function name detection
+--_mtable-regex-zsh3=main/^\s*(function\s+|)([[:alnum:]:@∞.+-]+)\(\s*\)\s*([\{]|[\n]+[\{])/\2/f/
+--_mtable-regex-zsh3=main/^\s*[\#][^\n]*///{tenter=comment}
+--_mtable-regex-zsh3=main/.//
+
+--_mtable-regex-zsh3=comment/[\n]///{tleave}
+--_mtable-regex-zsh3=comment/.//
+
+--_mtable-regex-zsh3=equal/([\"][^\"]*[\"])///{exclusive}{tleave}
+--_mtable-regex-zsh3=equal/([\'][^\']*[\'])///{exclusive}{tleave}
+--_mtable-regex-zsh3=equal/([\$][\(][\(])([^\)][^\)])*([^\)]){0,1}([\)][\)])///{exclusive}{tleave}
+--_mtable-regex-zsh3=equal/([\$][\(])([^\)]*)([\)])///{exclusive}{tleave}
+--_mtable-regex-zsh3=equal/([\(])([^\)]*)([\)])///{exclusive}{tleave}
+# Try to match sequences of ${…}\w${…}…
+--_mtable-regex-zsh3=equal/([\$][\{])((([^\}]*[\}][^\s][\$][\{])*[^\}]*)|[^\}]*)([\}])///{exclusive}{tleave}
+--_mtable-regex-zsh3=equal/[^\s\n]+///{exclusive}{tleave}{_advanceTo=0start} 
+--_mtable-regex-zsh3=equal/[\n\s]///{exclusive}{tleave}{_advanceTo=0start}
+
+# Match with required ="…
+--_mtable-regex-zsh3=vardef/([a-zA-Z_]\w*)([\=])/\1/v/{exclusive}{tenter=equal}
+--_mtable-regex-zsh3=vardef/([a-zA-Z_]\w*)/\1/v/{exclusive}
+--_mtable-regex-zsh3=vardef/[\x5C][\n]///{exclusive}
+--_mtable-regex-zsh3=vardef/([\n;\}\)\|\&])///{tleave}{exclusive}
+--_mtable-regex-zsh3=vardef/^\s*[\#][^\n]*///{tenter=comment}{exclusive}
+--_mtable-regex-zsh3=vardef/.//
