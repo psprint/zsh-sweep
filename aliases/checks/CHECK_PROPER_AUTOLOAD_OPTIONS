@@ -1,2 +1,2 @@
--g:<><1>:(#B)($~qpre)autoload(*~*(-U|-zU)*~*(-z|-))(#b)(-U|-zU|)*
+-g:<><1>:(#B)($~qpre)autoload(*~*(-[a-zA-TW-X]#U)*~*(-[a-zA-TW-X]##|-))(#b)(-[a-zA-TW-X]#U|)*
 
