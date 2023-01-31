@@ -23,7 +23,7 @@ local qstr="($qqstr1|$qqstr3$qqstr4|$qqstr5|$qqstr5a|$qqstr7|)"
 local qostr=$qstr[1,-2]'|([^[:space:]]#))'
 local -a qqprecmd=('\{' '\(' noglob command exec nocorrect builtin
                     '\&\&' '\|\|' '\|' '\&' if while )
-local qpre="$qosp(${(~j.|.)${qqprecmd[@]/(#e)/$qsp}}')"
+local qpre="($qosp(${(~j.|.)${qqprecmd[@]/(#e)/$qsp}}')|(#s)$qosp)"
 local qemu="(emulate$qsp(-L|-RL|-LR|-R)$qsp(zsh|sh|ksh|bash)|\
 setopt$qsp(localoptions|))$qosp"
 # Options string, either opt1 opt2, or -o opt1 -o opt2

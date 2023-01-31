@@ -1,2 +1,2 @@
--g:<><2>:(#B)(${~qosp}builtin$~qsp|$~qosp)autoload(*~*(-U|-zU)*~*(-z|-))(#b)(-U|-zU|)*
+-g:<><1>:(#B)($~qpre)autoload(*~*(-U|-zU)*~*(-z|-))(#b)(-U|-zU|)*
 
