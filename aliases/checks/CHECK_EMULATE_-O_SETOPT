@@ -1,1 +1,1 @@
--g:*((builtin$~qsp|$~qosp)emulate*$~qsp-o|setopt)*
+-g:*($~qpre)(emulate*$~qsp-o|setopt)*

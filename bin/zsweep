@@ -66,8 +66,10 @@ for QE;do
     (($+Opts[-C]))&&zsmsg -h {err}Notice:{%} work dir set to: {path}$Opts[-C]
     print
     $ZSDIR/libexec/zscan $opts $QE
-    QRET+=$?
+    QRET+=!!$?
 done
 
+((QRET))&&zswarn -h returning non-zero exit code - \
+                \# of failed files: {num}$QRET
 return QRET
 
