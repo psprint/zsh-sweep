@@ -22,7 +22,7 @@ source "$0:h:h"/libexec/zs::global-init.zsh
 local -A Opts
 local -a opts failed
 local QE
-integer QRET
+integer QRET QEC
 
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
         -D -E -A Opts -- \
@@ -66,8 +66,9 @@ for QE;do
     (($+Opts[-C]))&&zsmsg -h {err}Notice:{%} work dir set to: {path}$Opts[-C]
     print
     $ZSDIR/libexec/zscan $opts $QE
-    QRET+=!!$?
-    ((QRET))&&failed+=($QE)
+    QEC=!!$?
+    QRET+=QEC
+    ((QEC))&&failed+=($QE)
 done
 
 if ((QRET));then
