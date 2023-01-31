@@ -49,8 +49,8 @@ local -A ZS=("$reply[@]")
 # Blue message origin tag?
 local funloc=$1 nick=$ZSNICK tmp
 [[ $funloc == ?*:<-> ]]&&shift||funloc=
-[[ -n $nick ]]&&tmp+="{nick}%U%B[%b$nick%B]{%}"
-[[ -n $funloc ]]&&tmp+="{tag}%B[%b${funloc:t}%B]%b:{%}"
+[[ -n $nick ]]&&tmp+="%U%B[%b$nick%B]{%}"
+[[ -n $funloc ]]&&tmp+="%B[%b${funloc:t}%B]%b:{%}"
 
 # Output origin tag?
 (($+Opts[-h]))&&builtin set -- $tmp "$@"
@@ -96,8 +96,7 @@ ${${match[1]//(#s)([\\][\\])#(#e)/$tmp}//(#s)(#m)[\\]##(#e)/$tmpb}$match[3]}"
 
 # Isolate any quoted parts (with {code}…{/code})
 REPLY=${@[*]//(#b)(\{code\}*\{\/code\})/%%CODE%%}
-TMP=${ZS[code]//(#m)<->/%F\{$MATCH\}}\
-${match[1]//((#s)\{code\}|\{\/code\}(#e))}\
+TMP=$'\x1b[3m'${match[1]//((#s)\{code\}|\{\/code\}(#e))}\
 $ZS[%]
 # Substitute foreground {color}
 zsmsg_subst '{' '}' "$REPLY"

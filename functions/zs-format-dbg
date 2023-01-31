@@ -23,7 +23,7 @@ builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
                 -D -E -A Opts -- o l h -help||return 7
 
 if (($+Opts[-h]||$+Opts[--help]));then
-    autoload -z $ZSDIR/functions/zsmsgi
+    autoload -z $ZSDIR/functions/zsmsgi # zsweep:pass
     zsmsgi {txt}Usage:{cmd} zs-format-dbg {opt}-loh{%}{nl} \
         {opt}-o{%} – output to stdout, not only to {var}\$REPLY{%}{nl} \
         {opt}-l{%} – use new-lines to print arguments{%}{nl} \

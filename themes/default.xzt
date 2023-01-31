@@ -6,7 +6,7 @@ warn    %B204
 builtin %B179
 code    %B135
 nick    %B179
-chk     %B105
+chk     105
 type    %B174
 data    %B70
 num     %B41
@@ -23,7 +23,7 @@ url     27
 txt     %f%b
 quot    %B220
 ver     %B27
-note    %B76
+note    76
 quo     %B135
 bar     %B%U27
 pre     %B135

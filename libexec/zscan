@@ -93,8 +93,8 @@ for Q ($checks);do
     [[ $Q == *func*:* ]]&&QT+=${QT:+,}func
     [[ $Q == *src*:* ]]&&QT+=${QT:+,}sourced\ file
 
-    zsmsg {note}Notice:{%} running {type}${QT}${QT:+ }{%}check: \
-        {chk}${QC#\!}{warn}%b…
+    zsmsg {note}Notice:{%} running {type}%b${QT}${QT:+ }{%}check: \
+        {chk}%b${QC#\!}{warn}%b…
 
     # Check is loaded properly?
     if ! checks/zs::verify-check "$QC";then
