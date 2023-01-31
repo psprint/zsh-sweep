@@ -20,7 +20,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 source "$0:h:h"/libexec/zs::global-init.zsh
 
 local -A Opts
-local -a opts
+local -a opts failed
 local QE
 integer QRET
 
@@ -67,9 +67,13 @@ for QE;do
     print
     $ZSDIR/libexec/zscan $opts $QE
     QRET+=!!$?
+    ((QRET))&&failed+=($QE)
 done
 
-((QRET))&&zswarn -h returning non-zero exit code - \
-                \# of failed files: {num}$QRET
+if ((QRET));then
+    zswarn -h returning non-zero exit code
+    zswarn -h the {num}$QRET{%} failed files are:\
+    {nl}{pre}·{file}${(j:{nl}{pre}·{file}:)failed}{%}
+fi
 return QRET
 
