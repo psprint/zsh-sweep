@@ -49,8 +49,8 @@ local -A ZS=("$reply[@]")
 # Blue message origin tag?
 local funloc=$1 nick=$ZSNICK tmp
 [[ $funloc == ?*:<-> ]]&&shift||funloc=
-[[ -n $funloc ]]&&tmp+="{tag}%B[%b${funloc:t}%B]%b:{%}"
 [[ -n $nick ]]&&tmp+="{nick}%U%B[%b$nick%B]{%}"
+[[ -n $funloc ]]&&tmp+="{tag}%B[%b${funloc:t}%B]%b:{%}"
 
 # Output origin tag?
 (($+Opts[-h]))&&builtin set -- $tmp "$@"
