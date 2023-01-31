@@ -32,13 +32,16 @@ elif [[ $WAY == WRONGSTR ]]; then
 fi
 
 # Load file with normal method
-if [[ $WAY == normal ]];then
-    local IFS= LINE NL=$'\n'
+if [[ $WAY == normal* ]];then
+    local IFS= LINE NL=$'\n\\'
     integer IDX=1 INC
     while read -r LINE; do
         ((INC))&&IDX+=1
-        [[ $LINE == *([\\]|\|\||\&\&) ]]&&INC=0||INC=1
-        content[IDX]+="${LINE%%[\\$NL]##}"
+        [[ $WAY != *-nojoin ]]&&\
+            [[ $LINE == *([\\]|\|\||\&\&) ]]&&\
+                INC=0||INC=1
+        [[ $WAY != *-nojoin ]]&&LINE=${LINE%%[$NL]##}
+        content[IDX]+=$LINE
     done<$IN
 # Or via history mechanism
 elif [[ $WAY == history ]];then

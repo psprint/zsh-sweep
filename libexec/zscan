@@ -56,7 +56,7 @@ if [[ ! -r $WDIR/$IN ]];then
     return 1
 fi
 
-util/zs::read-file $WDIR/$IN normal||return 1
+util/zs::read-file $WDIR/$IN normal-nojoin||return 1
 local -a content=("$reply[@]") checks out qarr
 local -aU qkeep
 local -A ErrMap

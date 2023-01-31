@@ -27,7 +27,7 @@ local -a content=("${(P@)CONTENT_VARNAME}") save
 integer RET
 
 source $ZSDIR/libexec/zs::std-vars.inc.zsh
-repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- $content;RET=$?;}
+repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- "$content[@]";RET=$?;}
 ((RET))&&save+=($ErrMap[${CHECK#\!}])
 
 #print -Pl %F{33}Content\ after\ °%Bzsfilt%b°:%f $reply %K{220}END%k \

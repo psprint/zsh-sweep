@@ -59,6 +59,7 @@ fi
 # Initialize vars
 REPLY= reply=()
 local QE QECODES O
+local -a qc=("$@") qcontent
 integer QRET QOPT_GFLAG QFLAG_SEEN QHAVE_OUTPUT \
     QOPTIONAL=${${(M)PAT_OR_RUN##\!}:+1} QIDX
 local PAT_OR_RUN=${PAT_OR_RUN#\!}
@@ -74,7 +75,10 @@ local QUNWIND QCONDITION QCMD
 [[ $QALIAS == $~QPAT$~QPAT* ]]&&QCONDITION=$match[2]
 # Unwinded pattern took from global alias transport
 [[ $QALIAS == (($~QPAT)##:|)(#b)(*) ]]&&QUNWIND=$match[2]
- 
+
+util/zs::join-lines -d $'\f' "$@"
+qcontent=("${reply[@]//[[:space:]]##(#e)/}")
+
 #printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
 zs-code() {
     local QCMD=$1
@@ -84,6 +88,7 @@ zs-code() {
     [[ $QCMD == [^\!]* ]]&&QOPT_GFLAG+=!$#reply
     qreply+=($reply)
 }
+
 zs-save() {
     local QCMD=${1#save:} VAR_NAME=$2 VAL=$3
     # Strip trailing space
@@ -157,7 +162,7 @@ fi
 
 [[ $PAT_OR_RUN == *_PRE ]]&&: ${(AP)MARR_VAR::=}
 
-for QE; do
+for QE ($qcontent);do
         QIDX+=1
         if zs-filter $+Opts[--fr] "$PAT_OR_RUN" "$QE" "$MARR_VAR";then
             QECODES+=0 QRET=0
@@ -174,8 +179,10 @@ for QE; do
         fi
         if ((QFLAG_SEEN!=QOPT_GFLAG));then
             QFLAG_SEEN=QOPT_GFLAG
-            zserr -h %bError near line {num}\#$QIDX{txt}%b ↔\
-                 {code}${QE//$~qsp/ }{/code}{txt}%b:
+            local QP=${QE//(#m)[\*\]\[\?\#\(\)\|]/\\$MATCH}
+            integer QI=${qc[(I)${QP%%$'\f'*}*]}
+            zserr -h %bError near line {num}\#$QI{txt}%b ↔\
+              {code}${${QE%%$'\f'*}//$~qsp/ }{/code}{txt}%b:
         fi
 done
 REPLY=$QECODES
