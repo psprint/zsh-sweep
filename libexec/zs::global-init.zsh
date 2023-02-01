@@ -107,8 +107,7 @@ autoload -z $ZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
 
 # Export a few local var
 util/zs::setup-aliases||return 1
-util/zs::verify-zsweep-dir||return 1
-util/zs::get-prj-dir||return 1
-local -x PDIR=$REPLY PID=$REPLY:t:r
+util/zs::verify-zsweep-dir
+util/zs::get-prj-dir&&local -x PDIR=$REPLY PID=$REPLY:t:r
 
 # vim: ft=zsh sw=2 ts=2 et foldmarker=[[[,]]] foldmethod=marker

@@ -30,7 +30,7 @@ done
 
 REPLY=$REPLY:h
 if [[ $PRJ == WRONGSTR ]]; then
-    tigmsg -h %B{204}Error:%f%b didn\'t find any main poject dir \
+    zswarn -h didn\'t find any main poject dir \
                 uptree, was looking for: %B{39}·${(j.%f%b, %B{39}·.)qt}
     return 1
 fi
