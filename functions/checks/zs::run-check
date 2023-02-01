@@ -26,10 +26,13 @@ local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
 local -a content=("${(P@)CONTENT_VARNAME}") save
 integer RET
 
-source $ZSDIR/libexec/zs::std-vars.inc.zsh
-repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- "$content[@]";RET=$?;}
-((RET))&&save+=($ErrMap[${CHECK#\!}])
-
+if (($#content));then
+    source $ZSDIR/libexec/zs::std-vars.inc.zsh
+    repeat 1 {noglob zsfilt -v "$MARR_VARNAME" "$CHECK" -- "$content[@]";RET=$?;}
+    ((RET))&&save+=($ErrMap[${CHECK#\!}])
+else
+    zserr -h file empty, no content to verify
+fi
 #print -Pl %F{33}Content\ after\ °%Bzsfilt%b°:%f $reply %K{220}END%k \
     #——\$arr——: $arr
 

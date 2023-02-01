@@ -86,6 +86,11 @@ eval ErrMap=\(${=$(<$ZSDIR/errmap.dat)}\)
 (($+Opts[--script]))&&checks=(${checks:#(func,#|src,#)#:*})
 (($+Opts[--src]))&&checks=(${checks:#(func,#|script,#)#:*})
 
+if ((!$#content));then
+    zserr -h {file}$IN:t{%} empty, no content to verify
+    return 1
+fi
+
 for Q ($checks);do
     local QC=${Q##((script,#|func,#|src,#)##):}
     local QT=
@@ -101,7 +106,6 @@ for Q ($checks);do
         zserr Couldn\'t find data of check {data}$QC{txt}, check installation
         continue
     fi
-
     #
     # Main check exec code
     #
