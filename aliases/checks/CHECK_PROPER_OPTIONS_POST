@@ -1,1 +1,1 @@
--g:<!code><>:[[ $INPUT == CHECK_EMULATE_-O_SETOPT ]]&&{: ${${(@A)qkeep::=${=:-${=${${(z)qarr[@]}\/(-o)}}}}+}; : ${${(@A)qarr::=$(<$ZSDIR\/data\/14_recommended_options)}+};reply=(${qarr:|qkeep})}
+-g:<!code><>:: ${${(@A)qtmp::=${=:-${=${${(z)qarr[@]}\/(-o)}}}}+};[[ $INPUT == CHECK_EMULATE_-O_SETOPT && $INPUT == *${(j:*~^*:)qtmp}* ]]&&{: ${${(@A)qarr::=$(<$ZSDIR\/data\/14_recommended_options)}+};reply=(${qarr:|qkeep})}

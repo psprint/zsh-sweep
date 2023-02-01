@@ -90,17 +90,20 @@ zs-code() {
 }
 
 zs-save() {
-    local QCMD=${1#save:} VAR_NAME=$2 VAL=$3
+    local QCMD=${1##save:(\!|)} \
+        QEX=${(MS)1##\!} VAR_NAME=$2 VAL=$3
     # Strip trailing space
     VAL=${VAL//((#s)[[:space:]]##|[[:space:]]##(#e))}
     # Check if command is ·save·
-    [[ $1 != save:<-> || $QCMD != <-> ]]&&return 1
+    
+    [[ $1 != save:(\!|)<-> || $QCMD != <-> ]]&&return 1
     # Check if have required input
-    ((!$#QCMD||!$#VAR_NAME||!$#VAL))&&return 1
+    ((!$#QCMD||!$#VAR_NAME||!$#VAL||
+            ($#QEX&&${(P)#VAR_NAME})))&&return 1
     # Construct (P) var
     VAR_NAME=${VAR_NAME}\[${(P)#VAR_NAME}+1\]
     # Assign via (P)
-    : ${(P)VAR_NAME::="$VAL"}
+    : ${(AP@)VAR_NAME::="$VAL"}
     zsmsg $ndbg -h -- DBG: saved $VAL
 }
 
@@ -111,7 +114,7 @@ zs-filter()
     integer RET
 
     # Passthrough mark? Only for command and condition check
-    if [[ (-n $CMD || -n $QCONDITION) && $INPUT == *\#[[:space:]]#zsweep:pass ]];then
+    if [[ (-n $QCMD || -n $QCONDITION) && $INPUT == *\#[[:space:]]#zsweep:pass ]];then
         return 0
     fi
 
@@ -152,8 +155,8 @@ zs-filter()
         # Any command passed in <…>?
         if ((!RET&&$#QCMD));then
             #print local VAR_NAME=${MARR_VAR}\[${(P)#MARR_VAR}+1\]
-            #print $VAR_NAME
-            zs-save "$QCMD" "$MARR_VAR" "${match[${QCMD#save:}]}"
+            integer QIDX=${QCMD##save:(\!|)}
+            zs-save "$QCMD" "$MARR_VAR" "$match[QIDX]"
         fi
     fi
     return RET
@@ -165,8 +168,6 @@ then
     zswarn Check {data}$PAT_OR_RUN{txt} couldn\'t be found
     return 0
 fi
-
-[[ $PAT_OR_RUN == *_PRE ]]&&: ${(AP)MARR_VAR::=}
 
 for QE ($qcontent);do
         QIDX+=1

@@ -23,7 +23,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 #
 
 local CHECK=$1 CONTENT_VARNAME=$2 MARR_VARNAME=$3
-local -a content=("${(P@)CONTENT_VARNAME}") save
+local -a content=("${(P@)CONTENT_VARNAME}") save qtmp
 integer RET
 
 if (($#content));then

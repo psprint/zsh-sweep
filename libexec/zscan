@@ -106,6 +106,9 @@ for Q ($checks);do
         zserr Couldn\'t find data of check {data}$QC{txt}, check installation
         continue
     fi
+    # Reset side vars
+    [[ $QC == *_PRE ]]&&{qkeep=() qarr=() qtmp=();}
+
     #
     # Main check exec code
     #
