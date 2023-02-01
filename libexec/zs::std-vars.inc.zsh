@@ -1,4 +1,6 @@
-setopt rcquotes
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+setopt rcquotes #zsweep:pass
 local \
     qd='$' qa='`' qaa="'" \
     qocb='{' qccb='}' \
@@ -33,7 +35,7 @@ local -a qqprecmd=('\{' '\(' noglob command exec nocorrect builtin
                     '\&\&' '\|\|' '\|' '\&' if while )
 local qpre="($qosp(${(~j.|.)${qqprecmd[@]/(#e)/$qsp}}')|(#s)$qosp)"
 local qemu="(emulate$qsp(-L|-RL|-LR|-R)$qsp(zsh|sh|ksh|bash)|\
-setopt$qsp(localoptions|))$qosp"
+setopt$qsp(localoptions|))$qosp" #zsweep:pass
 # Options string, either opt1 opt2, or -o opt1 -o opt2
 local qropt="((#b)(${(~j.|.)${(@)${(@f)"$(<$ZSDIR/data/14_recommended_options)"}/\
 (#s)/"($qsp-o$qsp|$qsp)"}})#)"

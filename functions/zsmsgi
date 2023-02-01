@@ -40,7 +40,7 @@ local -Ua fpath=($ZSDIR/functions $fpath)
 local -a reply
 local TMP
 
-autoload -z util/zs::setup-aliases util/zs::read-msg-theme
+autoload -z util/zs::setup-aliases util/zs::read-msg-theme #zsweep:pass
 
 util/zs::setup-aliases||return 1
 util/zs::read-msg-theme

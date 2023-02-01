@@ -36,6 +36,7 @@ zsmsg_()
     fi
 }
 # ]]]
+export ZSDIR
 
 # Run as script? ZSH_SCRIPT is a Zsh 5.3 addition
 if [[ $0 != */zs::global-init.zsh || ! -f $0 ]]; then
@@ -101,7 +102,8 @@ fi
 
 # Autoload functions
 autoload -z $ZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
-                    $ZS/functions/*/zs:*~*'~'(#qN.non:t2)
+                    $ZS/functions/*/zs:*~*'~'(#qN.non:t2) \
+                        #zsweep:pass
 
 # Export a few local var
 util/zs::setup-aliases||return 1
