@@ -28,6 +28,7 @@ local sep=' '
 local q='{' qn='\\{'
 
 REPLY=${(j: :)${@//$q/$qn}}
+REPLY=${REPLY//\%/%%}}
 
 (($+Opts[-o]))&&print -r -- $REPLY
 
