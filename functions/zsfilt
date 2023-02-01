@@ -76,7 +76,7 @@ local QUNWIND QCONDITION QCMD
 # Unwinded pattern took from global alias transport
 [[ $QALIAS == (($~QPAT)##:|)(#b)(*) ]]&&QUNWIND=$match[2]
 
-util/zs::join-lines -d $'\f' "$@"
+util/zs::join-lines -d $'\f' -- "$@"
 qcontent=("${reply[@]//[[:space:]]##(#e)/}")
 
 #printf %s\\n QUNWIND=$QUNWIND QCMD=$QCMD QCONDITION=$QCONDITION
@@ -109,6 +109,11 @@ zs-filter()
     local QT=$1 PAT_OR_RUN=$2 INPUT=$3 MARR_VAR=$4 TMP
     local -a match=() mbegin=() mend=()
     integer RET
+    # Passthrough mark?
+    if [[ $INPUT == *\#[[:space:]]#zsweep:pass ]];then
+        return 0
+    fi
+
     if [[ $QT == 1 ]];then
         "$PAT_OR_RUN" "$INPUT" ZSIO
         RET=$?
@@ -124,10 +129,10 @@ zs-filter()
                 if [[ $QCONDITION == \!* ]];then
                     [[ -z $match[${QCONDITION#\!}] ]]
                     RET=$?
-               else
+                else
                     [[ -n $match[$QCONDITION] ]]
                     RET=$?
-               fi
+                fi
                 # Optional matching makes sense only for …:QCON:… condition,
                 # so set the QOPT_FLAG only in this if-branch.
                 # QOPT_GFLAG equal to 1 means: the pattern matched, but

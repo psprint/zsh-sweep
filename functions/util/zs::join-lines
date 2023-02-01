@@ -15,10 +15,11 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
 local -A Opts
-builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- d: ||return 7
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
+    -D -E -A Opts -- d: ||return 7
 
 local QSEP_P=$Opts[-d]
-
+[[ $1 == -- ]]&&shift
 reply=()
 
 integer IDX=1 INC
