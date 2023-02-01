@@ -33,14 +33,14 @@ fi
 
 # Load file with normal method
 if [[ $WAY == normal* ]];then
-    local IFS= LINE NL=$'\n\\'
+    local IFS= LINE NL=$'\n'\\
     integer IDX=1 INC
     while read -r LINE; do
         ((INC))&&IDX+=1
         [[ $WAY != *-nojoin ]]&&\
             [[ $LINE == *([\\]|\|\||\&\&) ]]&&\
                 INC=0||INC=1
-        [[ $WAY != *-nojoin ]]&&LINE=${LINE%%[$NL]##}
+        [[ $WAY != *-nojoin ]]&&LINE=${LINE%%[$~NL]##}
         content[IDX]+=$LINE
     done<$IN
 # Or via history mechanism

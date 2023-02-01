@@ -22,7 +22,7 @@ local QSEP_P=$Opts[-d]
 reply=()
 
 integer IDX=1 INC
-local Q NL="$'\n\r\f\v'" QSEP
+local Q NL=$'\n\r\f\v' QSEP
 
 for Q ("$@");do
     ((INC))&&IDX+=1
