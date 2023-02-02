@@ -36,16 +36,26 @@ local -a qinput=("$@")
 
 util/zs::setup-aliases||return 1
 
+alias -g APO_STR_PAT="('[^']#')##"
+alias -g STR_PAT='"([^\\"]|[\\]?)#"'
+alias -g STR_PAT_EX="(#b)(($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#)"
+alias -g STR_PAT_EX_QU="(#b)(($galiases[STR_PAT]|$galiases[APO_STR_PAT])\
+($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#)"
+alias -g CLOSE_FN_PAT="($qosp$qccb$qosp|*$qccb$qosp(#e))"
+#alias -g CLOSE_OPEN_PAT="(*[$qocb$qccb]*~*(([^\\]|(#s))([\\][\\])#\\[\}\{])*)"
+alias -g CLOSE_OPEN_PAT="(*[$qocb$qccb]*~*([\\][\}\{])*)"
+
 zs-count-open-close() {
     local o=$1 c=$3 in=("$@[4,-1]")
     shift 3
+
     in=(${in[@]//$~galiases[STR_PAT_EX_QU]})
     integer QO=0 QC=0
     : ${in[*]//(#b)((#s)|[^\\])([\\][\\])#($o##)/$((QO+=$#match[3]))}
     : ${in[*]//(#b)((#s)|[^\\])([\\][\\])#($c##)/$((QC+=$#match[3]))}
 
     REPLY=$((QC-QO))
-    #print -r -- reply=$REPLY↔$QC/$QO in:$in[*] orig:$* 
+    #print -r -u2 -- open-close'()' … reply=$REPLY↔$QC/$QO in:$in[*] orig:$* 
     return $((QC==QO))
 }
 
@@ -53,38 +63,30 @@ zs-find-proper-open() {
     integer i=$1 q
     local -a qe
     shift
-    #print -r -- Traverse for i=$i, @/$i=$@[i]
+    #print -r -- Traverse for °i°=$i, @/$i=$@[i]
     for ((;i>0;i--)) {
         qe=(${(z)${@[i]//(#b)((([$qocb]*[$qccb]))|\
 ([^\\])\#*(#e))/$match[3]$match[4]}})
         REPLY=0
         if [[ $qe[*] == CLOSE_OPEN_PAT && $qe[*] != STR_PAT_EX_QU ]];then
             zs-count-open-close $qocb -- $qccb "$qe[@]"
-        fi
-        if [[ $qe[*] == STR_PAT_EX_QU ]];then
+        elif [[ $qe[*] == STR_PAT_EX_QU ]];then
+            zs-count-open-close $qocb -- $qccb "$qe[@]"
+        elif [[ $qe[*] == CLOSE_OPEN_PAT ]];then
             zs-count-open-close $qocb -- $qccb "$qe[@]"
         fi
-        zsdbg 
         q+=REPLY
         if [[ $q -gt 0 && $qe[*] == CHECK_FUNCTION_PREAMBLE_USED ]];then
-            zsdbg $ndbg Found embedded function: {func}$match[1]
+            zsdbg found embedded function: {func}$match[1]
         fi
         ((q<=0))&&break
     }
     REPLY=$i
-    #print -r returning $REPLY / $@[i]
-    return q
+    # Correct if: q == 0 and i > 0
+    return q+!i
 }
 
-alias -g STR_PAT='\"([^\\\"]|[\\]?)#\"'
-alias -g APO_STR_PAT="\\'[^\\']#\\'"
-alias -g STR_PAT_EX="(#b)($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#"
-alias -g STR_PAT_EX_QU="(#b)(($galiases[STR_PAT]|$galiases[APO_STR_PAT])\
-($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#)"
-alias -g CLOSE_FN_PAT="($qosp$qccb$qosp|*$qccb$qosp(#e))"
-alias -g CLOSE_OPEN_PAT="(*[$qocb$qccb]*)"
-
-local -a func_found
+local -a func_found qreply
 local QE
 integer Q QN FOUND QBKP
 
@@ -98,16 +100,17 @@ for ((Q=$#qinput;Q>0;Q--)){
         func_found+=($match[1]_$Q)
     elif [[ $QE == CLOSE_FN_PAT ]];then
         if zs-count-open-close $qocb -- $qccb "$QE"&&((REPLY>0));then
-            # Traverse source to find opening '{'
+            # Traverse source to find opening
             #print Q \=== $Q, REPLY=$REPLY QE=$QE ««« $qinput[Q]
             if zs-find-proper-open $Q "$qinput[@]";then
                 while ((REPLY>1))&&\
-                    [[ $qinput[REPLY] != CHECK_FUNCTION_PREAMBLE_USED ]];do
+                    [[ $qinput[REPLY] != CHECK_FUNCTION_PREAMBLE_USED ]]
+                do
                     ((REPLY+=-1))
                 done
-                QBKP=REPLY QN+=1 FOUND=$((REPLY>0))
-                if ((FOUND))&& [[ $qinput[QBKP] == \
+                if ((REPLY>0))&&[[ $qinput[REPLY] == \
                      CHECK_FUNCTION_PREAMBLE_USED ]];then
+                        QBKP=REPLY ΩNUM+=$((REPLY>0)) FOUND=$((REPLY>0))
                         zsdbg found function {func}${match[1]}{%}, \
                             on lines {apo}\<{num}$QBKP{apo},{num}$Q{apo}\>{%}…
                 else
@@ -118,11 +121,14 @@ for ((Q=$#qinput;Q>0;Q--)){
             if ((!FOUND));then
                 zsdbg No function established
                 FOUND=0
+            else
+                qreply+=("${(F)qinput[QBKP,Q]}")
             fi
-            ((FOUND&&QN>1))&&Q=QBKP
         fi
     fi
 }
 
+reply=("$qreply[@]")
+return !$#reply
 
 }
