@@ -1,1 +1,1 @@
--g:<save:1><1>:$~qosp(local|typeset|declare|integer|float|readonly|export)$~qsp(-[a-zA-Z0-9]#$~qsp)#(#b)((#B)($~qid([=]$~qostr|)$~qosp)##)
+-g:<save:1><1>:*$~qqpre(local|typeset|declare|integer|float|readonly|export)$~qsp(-[a-zA-Z0-9]#$~qsp)#(#b)((#B)($~qid([=]$~qostr|)$~qosp)##*)

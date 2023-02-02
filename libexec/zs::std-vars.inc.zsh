@@ -5,6 +5,7 @@ local \
     qd='$' qa='`' qaa="'" \
     qocb='{' qccb='}' \
     qob='(' qcb=')' \
+    qnobq='[^\\]' qbq='[\\]' qobq='[\\]#' \
     qsp='[[:space:]]##' \
     qosp='[[:space:]]#' \
     qnosp='[^[:space:]]##' qnoosp='[^[:space:]]#' \
@@ -32,10 +33,14 @@ local qstr="($qqstr1|$qqstr3$qqstr4|$qqstr5|$qqstr5a|$qqstr7|)"
 local qostr=$qstr[1,-2]'|([^[:space:]]#))'
 
 local -a qqprecmd=('\{' '\(' noglob command exec nocorrect builtin
-                    '\&\&' '\|\|' '\|' '\&' if while )
+                    '\&\&' '\|\|' '\|' '\&' if while ) \
+        qqqprecmd=('\{' '\(' noglob nocorrect builtin
+                    '\&\&' '\|\|' '\|' '\|\&' '>\(' '<\(' '\&' if while )
+
 local qpre="($qosp(${(~j.|.)${qqprecmd[@]/(#e)/$qsp}}')|(#s)$qosp)"
-local qemu="(emulate$qsp(-L|-RL|-LR|-R)$qsp(zsh|sh|ksh|bash)|\
-setopt$qsp(localoptions|))$qosp" #zsweep:pass
+local qqpre="($qosp(${(~j.|.)${qqqprecmd[@]/(#e)/$qsp}}')|(#s)$qosp)"
+local qemu="(${qosp}emulate$qsp(-L|-RL|-LR|-R)$qsp(zsh|sh|ksh|bash)|\
+setopt$qsp(localoptions|))$qsp" #zsweep:pass
 # Options string, either opt1 opt2, or -o opt1 -o opt2
 local qropt="((#b)(${(~j.|.)${(@)${(@f)"$(<$ZSDIR/data/14_recommended_options)"}/\
 (#s)/"($qsp-o$qsp|$qsp)"}})#)"
