@@ -1,0 +1,1 @@
+-r:noglob zsmsg_ $0:t\:$LINENO {note}%bNotice:{txt}

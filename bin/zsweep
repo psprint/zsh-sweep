@@ -75,6 +75,8 @@ if ((QRET));then
     zswarn -h returning non-zero exit code
     zswarn -h the {num}$QRET{%}/{num}$#{%} failed files are:\
         {nl}{pre}·{file}${(j:{nl}{pre}·{file}:)failed}{%}
+else
+    zsmsg -h no errors occurred, all {num}$#{%} files passed
 fi
 return QRET
 
