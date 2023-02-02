@@ -7,7 +7,7 @@ local \
     qd='$' qa='`' qaa="'" \
     qocb='{' qccb='}' \
     qob='(' qcb=')' \
-    qnobq='[^\\]' qbq='[\\]' qobq='[\\]#' \
+    qnobq='[^\\]' qbq='\\##' qobq='\\#' \
     qsp='[[:space:]]##' \
     qosp='[[:space:]]#' \
     qnosp='[^[:space:]]##' qnoosp='[^[:space:]]#' \
