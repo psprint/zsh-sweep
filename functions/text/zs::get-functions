@@ -1,0 +1,128 @@
+#!/usr/bin/env zsh
+# Copyright (c) 2023 Sebastian Gniazdowski
+#
+
+text/zs::get-functions() {
+
+# Run as script?
+integer bescript=${${0:#text/zs::get-functions}:+1}
+
+# Set options
+builtin emulate -L zsh -o extendedglob -o noshortloops \
+                        -o warncreateglobal -o typesetsilent \
+                        -o nopromptsubst -o rcquotes
+
+# Set $0 with a new trik - use of %x prompt expansion
+0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
+
+# Source init script
+source "$0:h:h:h"/libexec/zs::global-init.zsh
+source "$0:h:h:h"/libexec/zs::std-vars.inc.zsh
+
+typeset -gA Plugins
+
+# Input/options
+local -A Opts
+builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} \
+    -D -E -A Opts -- -dbg||return 1
+
+set -- "${@:#--}"
+
+# Pull in --dbg if given outside
+integer ndbg=${ndbg:-1}
+ndbg=$(((!$+Opts[--dbg])*ndbg))
+
+local -a qinput=("$@")
+
+util/zs::setup-aliases||return 1
+
+zs-count-open-close() {
+    local o=$1 c=$3 in=("$@[4,-1]")
+    shift 3
+    in=(${in[@]//$~galiases[STR_PAT_EX_QU]})
+    integer QO=0 QC=0
+    : ${in[*]//(#b)((#s)|[^\\])([\\][\\])#($o##)/$((QO+=$#match[3]))}
+    : ${in[*]//(#b)((#s)|[^\\])([\\][\\])#($c##)/$((QC+=$#match[3]))}
+
+    REPLY=$((QC-QO))
+    #print -r -- reply=$REPLY↔$QC/$QO in:$in[*] orig:$* 
+    return $((QC==QO))
+}
+
+zs-find-proper-open() {
+    integer i=$1 q
+    local -a qe
+    shift
+    #print -r -- Traverse for i=$i, @/$i=$@[i]
+    for ((;i>0;i--)) {
+        qe=(${(z)${@[i]//(#b)((([$qocb]*[$qccb]))|\
+([^\\])\#*(#e))/$match[3]$match[4]}})
+        REPLY=0
+        if [[ $qe[*] == CLOSE_OPEN_PAT && $qe[*] != STR_PAT_EX_QU ]];then
+            zs-count-open-close $qocb -- $qccb "$qe[@]"
+        fi
+        if [[ $qe[*] == STR_PAT_EX_QU ]];then
+            zs-count-open-close $qocb -- $qccb "$qe[@]"
+        fi
+        zsdbg 
+        q+=REPLY
+        if [[ $q -gt 0 && $qe[*] == CHECK_FUNCTION_PREAMBLE_USED ]];then
+            zsdbg $ndbg Found embedded function: {func}$match[1]
+        fi
+        ((q<=0))&&break
+    }
+    REPLY=$i
+    #print -r returning $REPLY / $@[i]
+    return q
+}
+
+alias -g STR_PAT='\"([^\\\"]|[\\]?)#\"'
+alias -g APO_STR_PAT="\\'[^\\']#\\'"
+alias -g STR_PAT_EX="(#b)($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#"
+alias -g STR_PAT_EX_QU="(#b)(($galiases[STR_PAT]|$galiases[APO_STR_PAT])\
+($galiases[STR_PAT]|$galiases[APO_STR_PAT]|$qnoosp)#)"
+alias -g CLOSE_FN_PAT="($qosp$qccb$qosp|*$qccb$qosp(#e))"
+alias -g CLOSE_OPEN_PAT="(*[$qocb$qccb]*)"
+
+local -a func_found
+local QE
+integer Q QN FOUND QBKP
+
+# Check will match arbitrary function
+local -A QData=(file-name '[^\=\)\(]##')
+
+for ((Q=$#qinput;Q>0;Q--)){
+    FOUND=0
+    QE=$qinput[Q]
+    if [[ $QE == CHECK_FUNCTION_PREAMBLE_USED ]];then
+        func_found+=($match[1]_$Q)
+    elif [[ $QE == CLOSE_FN_PAT ]];then
+        if zs-count-open-close $qocb -- $qccb "$QE"&&((REPLY>0));then
+            # Traverse source to find opening '{'
+            #print Q \=== $Q, REPLY=$REPLY QE=$QE ««« $qinput[Q]
+            if zs-find-proper-open $Q "$qinput[@]";then
+                while ((REPLY>1))&&\
+                    [[ $qinput[REPLY] != CHECK_FUNCTION_PREAMBLE_USED ]];do
+                    ((REPLY+=-1))
+                done
+                QBKP=REPLY QN+=1 FOUND=$((REPLY>0))
+                if ((FOUND))&& [[ $qinput[QBKP] == \
+                     CHECK_FUNCTION_PREAMBLE_USED ]];then
+                        zsdbg found function {func}${match[1]}{%}, \
+                            on lines {apo}\<{num}$QBKP{apo},{num}$Q{apo}\>{%}…
+                else
+                    zsdbg couldn\'t find the recognized function, this \
+                            shouldn\'t happen
+                fi
+            fi
+            if ((!FOUND));then
+                zsdbg No function established
+                FOUND=0
+            fi
+            ((FOUND&&QN>1))&&Q=QBKP
+        fi
+    fi
+}
+
+
+}
