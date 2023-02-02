@@ -188,7 +188,7 @@ for QE ($qcontent);do
             QFLAG_SEEN=QOPT_GFLAG
             local QP=${QE//(#m)[\*\]\[\?\#\(\)\|\~]/\\$MATCH}
             integer QI=${qc[(I)${QP%%$'\f'*}*]}
-            zserr -h %bError near line {num}\#$QI{txt}%b ↔\
+            zserr -h %bnear line {num}\#$QI{txt}%b ↔\
               {code}${${QE%%$'\f'*}//$~qsp/ }{/code}{txt}%b:
         fi
 done
