@@ -2,6 +2,8 @@
 
 setopt rcquotes #zsweep:pass
 local \
+    qqob='[' qqcb=']' \
+\
     qd='$' qa='`' qaa="'" \
     qocb='{' qccb='}' \
     qob='(' qcb=')' \
