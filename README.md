@@ -12,6 +12,34 @@ Usage: zsweep [--help/-h] [-C work-dir] [--auto] [--func]
 --src            – set input file type to sourced-script 
 --dbg            – enable debug messages
 ```
+
+## Examples
+
+Using is calling of `zsweep` binary on the wanted files to
+verify. It is good to specify type of file (command script,
+sourced script and autoload function, see above), however
+in practice one just passes **`--auto`** to autodetect 
+the type.
+
+To sweep a `plugin.zsg` file:
+
+```zsh
+zsweep --auto zsh-sweep.plugin.zsh
+```
+
+To scan autoload functions of the project as example:
+
+```zsh
+zsweep --auto functions/*(.)
+```
+
+To scan a command script of the project with `CWD` switch
+via `-C` option (`CWD` is for *current working dir*):
+
+```zsh
+zsweep -C ~/github/zsh-sweep --auto bin/zsweep
+```
+
 ## Screenshots
 
 ![screenshot](https://raw.githubusercontent.com/psprint/zsh-sweep/master/img/screenshot.png)
