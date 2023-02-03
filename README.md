@@ -37,6 +37,7 @@ To scan a command script of the project with `CWD` switch
 via `-C` option (`CWD` is for *current working dir*):
 
 ```zsh
+# -C – cd to the given dir
 zsweep -C ~/github/zsh-sweep --auto bin/zsweep
 ```
 
