@@ -5,7 +5,7 @@
 # Possibly fix $0 with a new trick – use of a %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
-if [[ ${zsh_loaded_plugins[-1]} != */zsh-scan && -z ${fpath[(r)${0:h}]} ]] {
+if [[ ${zsh_loaded_plugins[-1]} != */zsh-sweep && -z ${fpath[(r)${0:h}]} ]] {
     fpath+=( "${0:h}" )
 }
 
