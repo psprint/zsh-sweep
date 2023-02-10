@@ -15,7 +15,7 @@ typeset -g -a reply match mbegin mend qreply
 typeset -g REPLY MATCH TMP qe; integer MBEGIN MEND
 
 # Plugins hash
-typeset -gA Plugins
+typeset -gA Plugins ZS
 # Already sourced?
 ((Plugins[ZS_GL_SRCD]))&&return 0
 # Mark that init script has been sourced
@@ -62,16 +62,16 @@ else
 fi
 
 # Shorthand vars
-local ZS=$0:h:h
+local QZS=$0:h:h
 local -aU path=($path) fpath=($fpath)
 local -U PATH FPATH
 
 # In case of the script using other scripts from the plugin, either set up
 # $fpath and autoload, or add the directory to $PATH.
-fpath+=( $ZS/{libexec,functions}(N/) )
+fpath+=( $QZS/{libexec,functions}(N/) )
 
 # OR
-path+=( $ZS/{bin,libexec,functions}(N/) )
+path+=( $QZS/{bin,libexec,functions}(N/) )
 
 # Modules
 zmodload zsh/parameter zsh/datetime||return 3
@@ -101,8 +101,8 @@ if [[ ! -f $ZSNFO ]]; then
 fi
 
 # Autoload functions
-autoload -z $ZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
-                    $ZS/functions/*/zs:*~*'~'(#qN.non:t2) \
+autoload -z $QZS/functions/(zs:#|@)*~*'~'(#qN.non:t) \
+                    $QZS/functions/*/zs:*~*'~'(#qN.non:t2) \
                         #zsweep:pass
 
 # Export a few local var

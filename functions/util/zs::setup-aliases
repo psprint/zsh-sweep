@@ -31,6 +31,7 @@ for DIR ($dirs);do
     [[ -f $DIR/*[^~](#qNY1.,@) ]]&&for REPLY in $DIR/*[^~](N.,@);do
         REPLY="$REPLY:t=$(<$REPLY)"
         alias "${${REPLY#*=}%%:*}" "${(M)REPLY##[^=]##}=${REPLY#*:}"
+        ZS[${(M)REPLY##[^=]##}]=${REPLY#*:}
     done
 done
 REPLY=
