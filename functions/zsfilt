@@ -64,7 +64,7 @@ integer QRET QOPT_GFLAG QFLAG_SEEN QHAVE_OUTPUT \
 local PAT_OR_RUN=${PAT_OR_RUN#\!}
 
 # Get the transported text from global alias
-local QALIAS=${galiases[$PAT_OR_RUN]#-[a-z]:} \
+local QALIAS=${ZS[$PAT_OR_RUN]#-[a-z]:} \
         QPAT='(#B)([<](#b)([^>]#)[>]|)' # pattern for <*>
 local QUNWIND QCONDITION QCMD
 
