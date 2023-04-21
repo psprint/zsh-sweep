@@ -45,7 +45,7 @@ zsweep -C ~/github/zsh-sweep --auto bin/zsweep
 
 ![screenshot](https://raw.githubusercontent.com/psprint/zsh-sweep/master/img/screenshot.png)
 
-## Instalation
+## Installation
 
 ### No plugin manager
 
