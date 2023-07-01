@@ -18,7 +18,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 typeset -gA ZS
 typeset -g REPLY
 
-Q# Input/options
+# Input/options
 local -A Opts
 builtin zparseopts ${${(M)ZSH_VERSION:#(5.[8-9]|6.[0-9])}:+-F} -D -E -A Opts -- -c || return 1
 
