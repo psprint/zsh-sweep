@@ -3,13 +3,13 @@
 ```
 Usage: zsweep [--help/-h] [-C work-dir] [--auto] [--func]
                  [--script] [--src] [--dbg]
- 
---help/-h        – this message 
--C work-dir      – like -C in Git – first cd to a dir 
---auto           – guess type of Zsh file 
---func           – set input file type to function 
---script         – set input file type to binary-script 
---src            – set input file type to sourced-script 
+
+--help/-h        – this message
+-C work-dir      – like -C in Git – first cd to a dir
+--auto           – guess type of Zsh file
+--func           – set input file type to function
+--script         – set input file type to binary-script
+--src            – set input file type to sourced-script
 --dbg            – enable debug messages
 ```
 
@@ -18,7 +18,7 @@ Usage: zsweep [--help/-h] [-C work-dir] [--auto] [--func]
 Using is calling of `zsweep` binary on the wanted files to
 verify. It is good to specify type of file (command script,
 sourced script and autoload function, see above), however
-in practice one just passes **`--auto`** to autodetect 
+in practice one just passes **`--auto`** to autodetect
 the type.
 
 To sweep a `plugin.zsg` file:
