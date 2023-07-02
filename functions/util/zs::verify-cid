@@ -12,7 +12,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 
 [[ $1 == -q ]]&&integer quiet=1&&shift
 local CID=$1
- 
+
 if [[ $CID == WRONGSTR || $#CID -gt 40 ]];then
     zsmsg $quiet %B{208}Error:{138}%b Got no commit hash \
         (in %B{41}\"$CID[1,7]\"%b{138}…), exiting…

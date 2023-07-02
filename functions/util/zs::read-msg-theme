@@ -14,7 +14,7 @@ builtin emulate -L zsh -o extendedglob -o noshortloops \
 # Recognize and save info on run as `#!/usr/bin/env zsh` script
 [[ $0 != xzmsg || -n $ZSH_SCRIPT ]]&&integer bescript=1
 
-# Set $0 with a new trik - use of %x prompt expansion
+# Set $0 with a new trick - use of %x prompt expansion
 0=${${(M)${0::=${(%):-%x}}:#/*}:-$PWD/$0}
 
 # The color theme → customize via theme file or ZS global, first testing it
