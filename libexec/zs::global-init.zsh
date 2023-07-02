@@ -94,7 +94,7 @@ command mkdir -p $ZSNFO:h $ZSLOG:h $ZSCACHE $ZSCONFIG $ZSNL:h $ZSAES:h
 if [[ ! -f $ZSNFO ]]; then
     command touch $ZSNFO
     [[ ! -f $ZSNFO ]]&&{zsmsg -h %U{204}Error:%f couldn\'t create \
-                the config %B{39}$ZSNFO%f%b, please addapt \
+                the config %B{39}$ZSNFO%f%b, please adapt \
                 file permissions or check if disk is full.
                 return 4
     }
